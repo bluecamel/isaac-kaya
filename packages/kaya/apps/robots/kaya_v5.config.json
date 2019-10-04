@@ -1,0 +1,36 @@
+{
+  "2d_kaya.kaya_hardware.kaya_driver": {
+    "isaac.Kaya.BaseDriver": {
+      "wheel_radius": 0.04,
+      "usb_port": "/dev/ttyUSB0",
+      "max_angular_speed": 3.5,
+      "max_safe_speed": 0.7,
+      "torque_limit": 0.3
+    }
+  },
+  "2d_kaya.kaya_hardware.camera": {
+    "realsense_pose": {
+      "lhs_frame": "robot",
+      "rhs_frame": "camera",
+      "pose": [0.482246, -0.517145, 0.517145, -0.482246, 0.08, 0.04, 0.175]
+    }
+  },
+  "shared_robot_model": {
+    "DifferentialBaseModel": {
+      "robot_radius": 0.15,
+      "base_length": 0.1178,
+      "wheel_radius": 0.03
+    },
+    "SphericalRobotShapeComponent": {
+      "circles": [
+        { "center": [0.0 ,0.0], "radius": 0.075},
+        { "center": [0.02 ,0.03464], "radius": 0.055},
+        { "center": [0.02 ,-0.03464], "radius": 0.055},
+        { "center": [-0.04 ,0.0], "radius": 0.055},
+        { "center": [0.0525 ,0.09093], "radius": 0.035},
+        { "center": [0.0525 ,-0.09093], "radius": 0.035},
+        { "center": [-0.105 ,0.0], "radius": 0.035}
+      ]
+    }
+  }
+}

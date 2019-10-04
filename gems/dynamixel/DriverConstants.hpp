@@ -1,0 +1,40 @@
+#pragma once
+
+#include "DriverTypes.hpp"
+
+namespace isaac {
+namespace Dynamixel {
+
+static const ControlTable ControlTable_MX_12W = {
+    24, // torque_enable
+    25, // led
+    26, // d_gain
+    27, // i_gain
+    28, // p_gain
+    30, // goal_position
+    32, // moving_speed
+    34, // torque_limit
+    36, // present_position
+    38, // present_speed
+    40, // present_load
+    42, // present_voltage
+    43, // present_temperature
+    44, // registered
+    46, // moving
+    47, // lock
+    48, // punch
+    50, // realtime_kick
+    73, // goal_acceleration
+};
+
+static const ControlValues ControlValues_MX_12W = {
+    0,      // success
+    1024,   // moving_speed_ccw_minimum
+    2047,   // moving_speed_ccw_maximum
+    0,      // moving_speed_cw_minimum
+    1023,   // moving_speed_cw_maximum
+    0.916,  // moving_speed_rpm_unit
+};
+
+} // namespace Dynamixel
+} // namspace isaac

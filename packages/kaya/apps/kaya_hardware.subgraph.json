@@ -1,0 +1,145 @@
+{
+    "modules": [
+      "@com_nvidia_isaac//packages/imu",
+      "@com_nvidia_isaac//packages/kaya_base",
+      "@com_nvidia_isaac//packages/realsense",
+      "@com_nvidia_isaac//packages/viewers"
+    ],
+    "config": {
+      "kaya_driver": {
+        "isaac.Kaya.BaseDriver": {
+          "priority": 100,
+          "tick_period": "100ms",
+          "baudrate": "1000000",
+          "max_safe_speed": 0.5,
+          "max_angular_speed": 2.0
+        },
+        "isaac.alice.Failsafe": {
+          "name": "robot_failsafe"
+        }
+      },
+      "camera": {
+        "realsense": {
+          "rows": 480,
+          "cols": 848,
+          "rgb_framerate": 30,
+          "depth_framerate": 30
+        },
+        "depth_viewer": {
+          "camera_name": "camera",
+          "max_visualization_depth": 2
+        },
+        "color_viewer": {
+          "camera_name": "camera"
+        }
+      },
+      "imu": {
+        "imu_hw": {
+          "i2c_device_id": 1,
+          "tick_period": "100Hz"
+        }
+      }
+    },
+    "graph": {
+      "nodes": [
+        {
+          "name": "subgraph",
+          "components": [
+            {
+              "name": "message_ledger",
+              "type": "isaac::alice::MessageLedger"
+            },
+            {
+              "name": "interface",
+              "type": "isaac::alice::Subgraph"
+            }
+          ]
+        },
+        {
+          "name": "kaya_driver",
+          "components": [
+            {
+              "name": "message_ledger",
+              "type": "isaac::alice::MessageLedger"
+            },
+            {
+              "name": "isaac.Kaya.BaseDriver",
+              "type": "isaac::Kaya::BaseDriver"
+            },
+            {
+              "name": "isaac.alice.Failsafe",
+              "type": "isaac::alice::Failsafe"
+            }
+          ]
+        },
+        {
+          "name": "camera",
+          "components": [
+            {
+              "name": "message_ledger",
+              "type": "isaac::alice::MessageLedger"
+            },
+            {
+              "name": "realsense_pose",
+              "type": "isaac::alice::PoseInitializer"
+            },
+            {
+              "name": "realsense",
+              "type": "isaac::RealsenseCamera"
+            },
+            {
+              "name": "depth_viewer",
+              "type": "isaac::viewers::DepthCameraViewer"
+            },
+            {
+              "name": "color_viewer",
+              "type": "isaac::viewers::ColorCameraViewer"
+            }
+          ]
+        },
+        {
+          "name": "imu",
+          "components": [
+            {
+              "name": "message_ledger",
+              "type": "isaac::alice::MessageLedger"
+            },
+            {
+              "name": "imu_hw",
+              "type": "isaac::imu::IioBmi160"
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "source": "subgraph/interface/base_command",
+          "target": "kaya_driver/isaac.Kaya.BaseDriver/command"
+        },
+        {
+          "source": "kaya_driver/isaac.Kaya.BaseDriver/state",
+          "target": "subgraph/interface/base_state"
+        },
+        {
+          "source": "camera/realsense/depth",
+          "target": "subgraph/interface/realsense_depth"
+        },
+        {
+          "source": "camera/realsense/color",
+          "target": "subgraph/interface/realsense_color"
+        },
+        {
+          "source": "camera/realsense/depth",
+          "target": "camera/depth_viewer/depth_listener"
+        },
+        {
+          "source": "camera/realsense/color",
+          "target": "camera/color_viewer/color_listener"
+        },
+        {
+          "source": "imu/imu_hw/imu_raw",
+          "target": "subgraph/interface/imu_raw"
+        }
+      ]
+    }
+  }
