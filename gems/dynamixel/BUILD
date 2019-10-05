@@ -8,7 +8,8 @@ isaac_cc_library(
     hdrs = [
         "driver_types.hpp",
         "driver_constants.hpp",
-        "driver.hpp"
+        "driver.hpp",
+        "util.hpp"
     ],
     visibility = ["//visibility:public"],
     deps = [

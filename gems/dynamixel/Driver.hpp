@@ -2,6 +2,7 @@
 
 #include "driver_constants.hpp"
 #include "driver_types.hpp"
+#include "util.hpp"
 #include "external/robotis/c++/include/dynamixel_sdk/dynamixel_sdk.h"
 #include <array>
 #include <vector>

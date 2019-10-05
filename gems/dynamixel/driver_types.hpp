@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <sstream>
 #include <string>
 
 namespace isaac {
@@ -55,18 +54,6 @@ struct ServoSpeed {
     int servo_id;
     int speed;
 };
-
-template <typename T>
-    std::string NumberToString ( T Number ) {
-        std::ostringstream ss;
-        ss << Number;
-        return ss.str();
-    }
-
-template <typename T>
-    T clamp(const T& value, const T& low, const T& high) {
-        return std::max(std::min(value, high), low);
-    }
 
 } // namespace dynamixel
 } // namspace isaac
