@@ -166,7 +166,7 @@ void Driver::SetTorqueLimit(std::vector<int> &servo_ids, int limit) {
             throw error;
         } else {
             if (configuration_.debug == true) {
-                std::printf("Set torque limit to %i for servo ID %s.\n", limit, servo_id_string.c_str()); // TODO: name?
+                std::printf("Set torque limit to %i for servo ID %s.\n", limit, servo_id_string.c_str());
             }
         }
     }
@@ -205,7 +205,7 @@ void Driver::ToggleTorque(std::vector<int> &servo_ids, bool enabled) {
             throw error;
         } else {
             if (configuration_.debug == true) {
-                std::printf("%s torque for servo ID %s.\n", enabled ? "Enabled" : "Disabled", servo_id_string.c_str()); // TODO: name?
+                std::printf("%s torque for servo ID %s.\n", enabled ? "Enabled" : "Disabled", servo_id_string.c_str());
             }
         }
     }
