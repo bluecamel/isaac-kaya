@@ -69,7 +69,7 @@ void BaseDriver::DynamixelStart() {
     LoadDynamixelDriver();
     dynamixel_driver_.Connect();
     dynamixel_driver_.ToggleTorque(servo_ids_, true);
-    dynamixel_driver_.SetTorqueLimit(servo_ids_, get_torque_limit() * 1023);
+    dynamixel_driver_.SetTorqueLimit(servo_ids_, get_torque_limit() * dynamixel_driver_.configuration_.control_values.torque_limit_maximum);
 }
 
 void BaseDriver::DynamixelStop() {

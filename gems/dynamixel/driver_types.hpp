@@ -36,6 +36,10 @@ struct ControlValues {
     int moving_speed_cw_minimum;
     int moving_speed_cw_maximum;
     float moving_speed_rpm_unit;
+    int torque_disable;
+    int torque_enable;
+    int torque_limit_minimum;
+    int torque_limit_maximum;
 };
 
 struct Configuration {

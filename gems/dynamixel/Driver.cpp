@@ -42,10 +42,10 @@ dynamixel_sdk::PortHandler *Driver::GetPortHandler() {
 std::vector<ServoSpeed> Driver::GetPresentSpeeds(std::vector<int> &servo_ids) {
     uint8_t error;
     int result;
-    int servo_id; // TODO: eh
-    uint16_t present_speed; // TODO: eh
-    float rpm; // TODO: switch to ServoRpm?
-    std::string servo_id_string; // TODO: eh
+    uint16_t present_speed;
+    float rpm;
+    int servo_id;
+    std::string servo_id_string;
 
     std::vector<ServoSpeed> speeds;
 
@@ -63,12 +63,12 @@ std::vector<ServoSpeed> Driver::GetPresentSpeeds(std::vector<int> &servo_ids) {
 
         if (result != configuration_.control_values.success) {
             std::printf("Error communicating with servo ID %s: %s (result: %i) while getting present speed.\n", servo_id_string.c_str(), packet_handler_->getTxRxResult(result), result);
-            // TODO: throw? retry? stop?
+            throw error;
         } else if (error != 0) {
             if (configuration_.debug == true) {
                 std::printf("Error getting present speed for servo ID %s: %s\n", servo_id_string.c_str(), packet_handler_->getRxPacketError(error));
             }
-            // TODO: throw? retry? stop?
+            throw error;
         } else {
             rpm = SpeedToRpm(present_speed);
 
@@ -112,10 +112,10 @@ void Driver::SetConfiguration(Configuration configuration) {
 void Driver::SetMovingSpeeds(std::vector<ServoSpeed> &speeds) {
     uint8_t error;
     int result;
-    int servo_id; // TODO: eh
-    int speed; // TODO: eh
-    float rpm; // TODO: change to ServoRpm?
-    std::string servo_id_string; // TODO: eh
+    float rpm;
+    int servo_id;
+    std::string servo_id_string;
+    int speed;
 
     for(std::vector<ServoSpeed>::iterator i = speeds.begin(); i != speeds.end(); ++i) {
         // TODO: I'm not sure why I have to use 0 index here
@@ -132,10 +132,10 @@ void Driver::SetMovingSpeeds(std::vector<ServoSpeed> &speeds) {
 
         if (result != configuration_.control_values.success) {
             std::printf("Error communicating with servo ID %s: %s (result: %i) while setting moving speed.\n", servo_id_string.c_str(), packet_handler_->getTxRxResult(result), result);
-            // TODO: throw? retry? stop?
+            throw error;
         } else if (error != 0) {
             std::printf("Error setting moving speed for servo ID %s to %i (%f rpm): %s\n", servo_id_string.c_str(), speed, rpm, packet_handler_->getRxPacketError(error));
-            // TODO: throw? retry? stop?
+            throw error;
         } else {
             if (configuration_.debug == true) {
                 std::printf("Set moving speed for servo ID %s to %i (%f rpm).\n", servo_id_string.c_str(), speed, rpm);
@@ -160,10 +160,10 @@ void Driver::SetTorqueLimit(std::vector<int> &servo_ids, int limit) {
 
         if (result != configuration_.control_values.success) {
             std::printf("Error communicating with servo ID %s: %s (result: %i) while setting torque limit to %i.\n", servo_id_string.c_str(), packet_handler_->getTxRxResult(result), result, limit);
-            // TODO: throw? stop?
+            throw error;
         } else if (error != 0) {
             std::printf("Error setting torque limit to %i for servo ID %s: %s.\n", limit, servo_id_string.c_str(), packet_handler_->getRxPacketError(error));
-            // TODO: throw? stop?
+            throw error;
         } else {
             if (configuration_.debug == true) {
                 std::printf("Set torque limit to %i for servo ID %s.\n", limit, servo_id_string.c_str()); // TODO: name?
@@ -185,7 +185,7 @@ double Driver::SpeedToRpm(int speed) {
 void Driver::ToggleTorque(std::vector<int> &servo_ids, bool enabled) {
     uint8_t error;
     int result;
-    int torque_enable_value = enabled ? 1 : 0; // TODO: value struct?
+    int torque_enable_value = enabled ? configuration_.control_values.torque_enable : configuration_.control_values.torque_disable;
 
     for(std::vector<int>::iterator i = servo_ids.begin(); i != servo_ids.end(); ++i) {
         int servo_id = *i;
@@ -199,10 +199,10 @@ void Driver::ToggleTorque(std::vector<int> &servo_ids, bool enabled) {
 
         if (result != configuration_.control_values.success) {
             std::printf("Error communicating with servo ID %s: %s (result: %i) while %s torque.\n", servo_id_string.c_str(), packet_handler_->getTxRxResult(result), result, enabled ? "enabling" : "disabling");
-            // TODO: throw? stop?
+            throw error;
         } else if (error != 0) {
             std::printf("Error %s torque for servo ID %s: %s.\n", enabled ? "enabling" : "disabling", servo_id_string.c_str(), packet_handler_->getRxPacketError(error));
-            // TODO: throw? stop?
+            throw error;
         } else {
             if (configuration_.debug == true) {
                 std::printf("%s torque for servo ID %s.\n", enabled ? "Enabled" : "Disabled", servo_id_string.c_str()); // TODO: name?

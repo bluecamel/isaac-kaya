@@ -34,6 +34,10 @@ static const ControlValues kControlValues_MX_12W = {
     0,      // moving_speed_cw_minimum
     1023,   // moving_speed_cw_maximum
     0.916,  // moving_speed_rpm_unit
+    0,      // torque_disable
+    1,      // torque_enable
+    0,      // torque_limit_minimum
+    1023,   // torque_limit_maximum
 };
 
 } // namespace dynamixel
