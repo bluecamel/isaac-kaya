@@ -3,12 +3,12 @@ load("@com_nvidia_isaac//engine/build:isaac.bzl", "isaac_cc_library")
 isaac_cc_library(
     name = "dynamixel",
     srcs = [
-        "Driver.cpp"
+        "driver.cpp"
     ],
     hdrs = [
-        "DriverTypes.hpp",
-        "DriverConstants.hpp",
-        "Driver.hpp"
+        "driver_types.hpp",
+        "driver_constants.hpp",
+        "driver.hpp"
     ],
     visibility = ["//visibility:public"],
     deps = [

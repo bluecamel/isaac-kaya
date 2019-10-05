@@ -6,27 +6,24 @@
 #include "messages/messages.hpp"
 #include "messages/state/holonomic_base.hpp"
 #include "messages/tensor.hpp"
-#include "gems/dynamixel/Driver.hpp"
-#include "gems/kaya_kinematics/Kinematics.hpp"
+#include "gems/dynamixel/driver.hpp"
+#include "gems/kaya_kinematics/kinematics.hpp"
 
 namespace isaac {
-namespace Kaya {
+namespace kaya {
 
 class BaseDriver: public alice::Codelet {
     private:
-        isaac::Dynamixel::Configuration dynamixelConfiguration;
-        isaac::Dynamixel::Driver dynamixelDriver;
-        isaac::Kaya::KinematicsConfiguration kinematicsConfiguration;
-        isaac::Kaya::Kinematics kinematics;
-        std::vector<int> servoIds;
+        isaac::dynamixel::Driver dynamixel_driver_;
+        isaac::kaya::Kinematics kinematics_;
+        std::vector<int> servo_ids_;
 
-        void configureKinematics();
-        void dynamixelStart();
-        void dynamixelStop();
-        void loadDynamixelDriver();
-        void loadParameters();
-        void move(messages::HolonomicBaseControls command);
-        void report(messages::HolonomicBaseControls command);
+        void ConfigureKinematics();
+        void DynamixelStart();
+        void DynamixelStop();
+        void LoadDynamixelDriver();
+        void Move(messages::HolonomicBaseControls command);
+        void Report(messages::HolonomicBaseControls command);
 
     public:
         void tick() override;
@@ -54,7 +51,7 @@ class BaseDriver: public alice::Codelet {
         ISAAC_PROTO_TX(StateProto, state);
 };
 
-} // namespace Kaya
+} // namespace kaya
 } // namespace isaac
 
-ISAAC_ALICE_REGISTER_CODELET(isaac::Kaya::BaseDriver);
+ISAAC_ALICE_REGISTER_CODELET(isaac::kaya::BaseDriver);

@@ -5,7 +5,7 @@
 #include <string>
 
 namespace isaac {
-namespace Dynamixel {
+namespace dynamixel {
 
 struct ControlTable {
     int torque_enable;
@@ -64,5 +64,5 @@ template <typename T>
         return std::max(std::min(value, high), low);
     }
 
-} // namespace Dynamixel
+} // namespace dynamixel
 } // namspace isaac

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "DriverTypes.hpp"
+#include "driver_types.hpp"
 
 namespace isaac {
-namespace Dynamixel {
+namespace dynamixel {
 
-static const ControlTable ControlTable_MX_12W = {
+static const ControlTable kControlTable_MX_12W = {
     24, // torque_enable
     25, // led
     26, // d_gain
@@ -27,7 +27,7 @@ static const ControlTable ControlTable_MX_12W = {
     73, // goal_acceleration
 };
 
-static const ControlValues ControlValues_MX_12W = {
+static const ControlValues kControlValues_MX_12W = {
     0,      // success
     1024,   // moving_speed_ccw_minimum
     2047,   // moving_speed_ccw_maximum
@@ -36,5 +36,5 @@ static const ControlValues ControlValues_MX_12W = {
     0.916,  // moving_speed_rpm_unit
 };
 
-} // namespace Dynamixel
+} // namespace dynamixel
 } // namspace isaac

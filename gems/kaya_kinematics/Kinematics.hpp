@@ -4,42 +4,42 @@
 #include <cmath>
 
 namespace isaac {
-namespace Kaya {
+namespace kaya {
 
 struct KinematicsConfiguration {
-    double maxAngularSpeed;
-    double maxSafeSpeed;
-    double orthogonalRotationAngle;
-    double wheelBaseLength;
-    double wheel1Angle;
-    double wheel2Angle;
-    double wheel3Angle;
-    double wheelRadius;
+    double max_angular_speed;
+    double max_safe_speed;
+    double orthogonal_rotation_angle;
+    double wheel_base_length;
+    double wheel_1_angle;
+    double wheel_2_angle;
+    double wheel_3_angle;
+    double wheel_radius;
 };
 
 class Kinematics {
     private:
-        KinematicsConfiguration configuration;
+        KinematicsConfiguration configuration_;
 
-        double _angularVelocitiesToRpmsFactor;
-        isaac::Matrix3d _orthogonalRotationMatrix;
-        isaac::Matrix3d _orthogonalRotationMatrixInverse;
-        double _rpmsToAngularVelocitiesFactor;
-        isaac::Matrix3d _wheelConstraints;
-        isaac::Matrix3d _wheelConstraintsInverse;
-        isaac::Matrix3d _wheelRadii;
-        isaac::Matrix3d _wheelRadiiInverse;
+        double angular_velocities_to_rpms_factor_;
+        isaac::Matrix3d orthogonal_rotation_matrix_;
+        isaac::Matrix3d orthogonal_rotation_matrix_inverse_;
+        double rpms_to_angular_velocities_factor_;
+        isaac::Matrix3d wheel_constraints_;
+        isaac::Matrix3d wheel_constraints_inverse_;
+        isaac::Matrix3d wheel_radii_;
+        isaac::Matrix3d wheel_radii_inverse_;
 
     public:
-        isaac::MatrixXd angularVelocitiesToRpms(isaac::MatrixXd wheel_velocities);
-        isaac::Matrix3d orthogonalRotationMatrix(double angle);
-        isaac::MatrixXd robotVelocities(isaac::MatrixXd wheel_velocities);
-        isaac::MatrixXd rpmsToAngularVelocities(isaac::MatrixXd wheel_rpms);
-        void setConfiguration(KinematicsConfiguration _configuration);
-        isaac::Matrix3d wheelConstraints();
-        isaac::Matrix3d wheelRadii();
-        isaac::MatrixXd wheelVelocities(isaac::MatrixXd robot_velocities);
+        isaac::MatrixXd AngularVelocitiesToRpms(isaac::MatrixXd wheel_velocities);
+        isaac::Matrix3d OrthogonalRotationMatrix(double angle);
+        isaac::MatrixXd RobotVelocities(isaac::MatrixXd wheel_velocities);
+        isaac::MatrixXd RpmsToAngularVelocities(isaac::MatrixXd wheel_rpms);
+        void SetConfiguration(KinematicsConfiguration _configuration);
+        isaac::Matrix3d WheelConstraints();
+        isaac::Matrix3d WheelRadii();
+        isaac::MatrixXd WheelVelocities(isaac::MatrixXd robot_velocities);
 };
 
-} // namespace Kaya
+} // namespace kaya
 } // namespace isaac

@@ -3,10 +3,10 @@ load("@com_nvidia_isaac//engine/build:isaac.bzl", "isaac_cc_library")
 isaac_cc_library(
     name = "kaya_kinematics",
     srcs = [
-        "Kinematics.cpp"
+        "kinematics.cpp"
     ],
     hdrs = [
-        "Kinematics.hpp"
+        "kinematics.hpp"
     ],
     visibility = ["//visibility:public"],
     deps = [

@@ -1,36 +1,38 @@
 #pragma once
 
-#include "DriverConstants.hpp"
-#include "DriverTypes.hpp"
+#include "driver_constants.hpp"
+#include "driver_types.hpp"
 #include "external/robotis/c++/include/dynamixel_sdk/dynamixel_sdk.h"
 #include <array>
 #include <vector>
 
+namespace dynamixel_sdk = dynamixel;
+
 namespace isaac {
-namespace Dynamixel {
+namespace dynamixel {
 
 class Driver {
     private:
-        dynamixel::PacketHandler *packetHandler;
-        dynamixel::PortHandler *portHandler;
+        dynamixel_sdk::PacketHandler *packet_handler_;
+        dynamixel_sdk::PortHandler *port_handler_;
 
     public:
-        Configuration configuration;
+        Configuration configuration_;
 
-        void connect();
-        void disconnect();
-        dynamixel::PacketHandler *getPacketHandler();
-        dynamixel::PortHandler *getPortHandler();
-        std::vector<ServoSpeed> getPresentSpeeds(std::vector<int> &servoIds);
-        bool openPort();
-        int rpmToSpeed(double rpm);
-        bool setBaudRate();
-        void setConfiguration(Configuration _configuration);
-        void setMovingSpeeds(std::vector<ServoSpeed> &speeds);
-        void setTorqueLimit(std::vector<int> &servoIds, int limit);
-        double speedToRpm(int speed);
-        void toggleTorque(std::vector<int> &servoIds, bool enabled);
+        void Connect();
+        void Disconnect();
+        dynamixel_sdk::PacketHandler *GetPacketHandler();
+        dynamixel_sdk::PortHandler *GetPortHandler();
+        std::vector<ServoSpeed> GetPresentSpeeds(std::vector<int> &servo_ids);
+        bool OpenPort();
+        int RpmToSpeed(double rpm);
+        bool SetBaudRate();
+        void SetConfiguration(Configuration configuration);
+        void SetMovingSpeeds(std::vector<ServoSpeed> &speeds);
+        void SetTorqueLimit(std::vector<int> &servo_ids, int limit);
+        double SpeedToRpm(int speed);
+        void ToggleTorque(std::vector<int> &servo_ids, bool enabled);
 };
 
-} // namespace Dynamixel
+} // namespace dynamixel
 } // namespace isaac
