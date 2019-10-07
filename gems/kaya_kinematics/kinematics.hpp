@@ -19,9 +19,8 @@ struct KinematicsConfiguration {
 
 class Kinematics {
     private:
-        KinematicsConfiguration configuration_;
-
         double angular_velocities_to_rpms_factor_;
+        KinematicsConfiguration configuration_;
         isaac::Matrix3d orthogonal_rotation_matrix_;
         isaac::Matrix3d orthogonal_rotation_matrix_inverse_;
         double rpms_to_angular_velocities_factor_;

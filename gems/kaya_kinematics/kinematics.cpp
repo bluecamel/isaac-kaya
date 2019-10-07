@@ -30,7 +30,7 @@ void Kinematics::SetConfiguration(KinematicsConfiguration configuration) {
     angular_velocities_to_rpms_factor_ = 30 / M_PI;
     rpms_to_angular_velocities_factor_ = M_PI / 30;
     orthogonal_rotation_matrix_ = OrthogonalRotationMatrix(configuration_.orthogonal_rotation_angle);
-    orthogonal_rotation_matrix_inverse_ = OrthogonalRotationMatrix(0).inverse();
+    orthogonal_rotation_matrix_inverse_ = OrthogonalRotationMatrix(configuration_.orthogonal_rotation_angle).inverse();
     wheel_constraints_ = WheelConstraints();
     wheel_constraints_inverse_ = WheelConstraints().inverse();
     wheel_radii_ = WheelRadii();
