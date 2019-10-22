@@ -11,6 +11,12 @@
         "HolonomicBaseWheelImuOdometry": {
           "use_imu": false
         }
+      },
+      "websight": {
+        "WebsightServer": {
+          "webroot": "external/com_nvidia_isaac/packages/sight/webroot",
+          "assetroot": "../isaac_assets"
+        }
       }
     },
     "graph": {
