@@ -39,7 +39,7 @@ Replace `bluecamel` with your username on the Kaya.  Replace `0.0.0.0` with the 
 
 ## BaseDriver component API
 
-`isaac.kaya.BaseDriver` is compatible with [isaac.KayaBaseDriver](https://docs.nvidia.com/isaac/isaac/doc/component_api.html#isaac-kayabasedriver), but doesn't currently respect all parameters.  The following parameters are currently ignored: `max_safe_speed`, `max_angular_speed`, `debug_speed`, `debug_servos`.
+`isaac.kaya.BaseDriver` is compatible with [isaac.KayaBaseDriver](https://docs.nvidia.com/isaac/isaac/doc/component_api.html#isaac-kayabasedriver), but doesn't currently respect all parameters.
 
 ### Incoming messages
 - **command** [HolonomicBaseControls: StateProto]: The holonomic command to be sent to the motors.
@@ -55,12 +55,14 @@ Replace `bluecamel` with your username on the Kaya.  Replace `0.0.0.0` with the 
   - **acceleration_x** [*double*]: Linear acceleration of the robot  in the global reference frame's x axis.  This is calculated from the current and previous velocities, as reported by the Dynamixel motors.
   - **acceleration_y** [*double*]: Linear acceleration of the robot  in the global reference frame's y axis.  This is calculated from the current and previous velocities, as reported by the Dynamixel motors.
 
+**NOTE:** The following parameters are currently ignored: `max_safe_speed`, `max_angular_speed`, `debug_speed`, `debug_servos`.
+
 ### Parameters
 - **baudrate** [*int*] [default=1000000]: Baud rate of the Dynamixel bus. This is the rate of information transfer.
 - **debug_mode** [*bool*] [default=false]: If true, the dynamixel driver will be very chatty will print out details about every command that is being run.  *This currently doesn't behave in the same way as `isaac.KayaBaseDriver`.*
 - **dynamixel_protocol_version** [*float*] [default=1.0]: The protocol version to use when communicatin with the Dynamixel motors (e.g. `1.0` or `2.0`).
-- **max_angular_speed** [*double*] [default=0.3]: Max turning rate
-- **max_safe_speed** [*double*] [default=0.3]: Max safe speed
+- **max_angular_speed** [*double*] [default=0.3]: Max turning rate.  **_Currently ignored._**
+- **max_safe_speed** [*double*] [default=0.3]: Max safe speed.  **_Currently ignored._**
 - **orthogonal_rotation_angle** [*double*] [default=0]: The angle of rotation between the robot frame and global frame.
 - **servo_back** [*int*] [default=2]: Unique identifier for Dynamixel servo at back. Each motor needs to be assigned a unique ID using the software provided by Dynamixel.
 - **servo_front_left** [*int*] [default=1]: Unique identifier for Dynamixel servo at front left. Each motor needs to be assigned a unique ID using the software provided by Dynamixel.
