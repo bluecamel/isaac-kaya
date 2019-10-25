@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+#include <chrono>
+#include <ctime>
+
 #include "engine/alice/alice_codelet.hpp"
 #include "engine/core/constants.hpp"
 #include "engine/gems/state/io.hpp"
@@ -16,6 +20,7 @@ class BaseDriver: public alice::Codelet {
     private:
         isaac::dynamixel::Driver dynamixel_driver_;
         isaac::kaya::Kinematics kinematics_;
+        isaac::kaya::SpeedsAtTime previous_speeds_;
         std::vector<int> servo_ids_;
 
         void ConfigureKinematics();

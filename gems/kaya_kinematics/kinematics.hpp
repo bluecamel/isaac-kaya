@@ -2,6 +2,9 @@
 
 #include "engine/core/math/types.hpp"
 #include <cmath>
+#include <iostream>
+#include <chrono>
+#include <ctime>
 
 namespace isaac {
 namespace kaya {
@@ -15,6 +18,12 @@ struct KinematicsConfiguration {
     double wheel_2_angle;
     double wheel_3_angle;
     double wheel_radius;
+};
+
+struct SpeedsAtTime {
+  double speed_x;
+  double speed_y;
+  std::chrono::time_point<std::chrono::system_clock> time;
 };
 
 class Kinematics {
@@ -32,6 +41,7 @@ class Kinematics {
     public:
         isaac::MatrixXd AngularVelocitiesToRpms(isaac::MatrixXd wheel_velocities);
         isaac::Matrix3d OrthogonalRotationMatrix(double angle);
+        isaac::MatrixXd RobotAccelerations(isaac::kaya::SpeedsAtTime previous, isaac::kaya::SpeedsAtTime current);
         isaac::MatrixXd RobotVelocities(isaac::MatrixXd wheel_velocities);
         isaac::MatrixXd RpmsToAngularVelocities(isaac::MatrixXd wheel_rpms);
         void SetConfiguration(KinematicsConfiguration _configuration);

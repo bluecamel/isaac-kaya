@@ -6,6 +6,7 @@ namespace kaya {
 // public
 
 void BaseDriver::start() {
+    previous_speeds_ = { 0.0, 0.0, std::chrono::system_clock::now()};
     ConfigureKinematics();
     DynamixelStart();
     tickPeriodically();
@@ -99,6 +100,7 @@ void BaseDriver::Move(messages::HolonomicBaseControls command) {
 
 void BaseDriver::Report(messages::HolonomicBaseControls command) {
     std::vector<isaac::dynamixel::ServoSpeed> servo_speeds = dynamixel_driver_.GetPresentSpeeds(servo_ids_);
+    std::chrono::time_point<std::chrono::system_clock> current_time = std::chrono::system_clock::now();
 
     isaac::MatrixXd wheel_rpms(3, 1);
     wheel_rpms << dynamixel_driver_.SpeedToRpm(servo_speeds.at(0).speed),
@@ -111,15 +113,23 @@ void BaseDriver::Report(messages::HolonomicBaseControls command) {
     isaac::MatrixXd robot_velocities(3, 1);
     robot_velocities << kinematics_.RobotVelocities(wheel_velocities);
 
-    messages::HolonomicBaseState state;
-    state.pos_x() = 0.0; // TODO
-    state.pos_y() = 0.0; // TODO
-    state.heading() = 0.0; // TODO
+    isaac::kaya::SpeedsAtTime current_speeds = {
+      robot_velocities(0, 0),
+      robot_velocities(1, 0),
+      current_time
+    };
+
+    isaac::MatrixXd robot_accelerations(3, 1);
+    robot_accelerations << kinematics_.RobotAccelerations(previous_speeds_, current_speeds);
+
+    previous_speeds_ = current_speeds;
+
+    messages::HolonomicBaseDynamics state;
     state.speed_x() = robot_velocities(0, 0);
     state.speed_y() = robot_velocities(1, 0);
     state.angular_speed() = robot_velocities(2, 0);
-    state.acceleration_x() = 0.0; // TODO
-    state.acceleration_y() = 0.0; // TODO
+    state.acceleration_x() = robot_accelerations(0, 0);
+    state.acceleration_y() = robot_accelerations(1, 0);
     ToProto(state, tx_state().initProto(), tx_state().buffers());
     tx_state().publish();
 }

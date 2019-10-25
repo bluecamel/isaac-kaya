@@ -16,6 +16,16 @@ isaac::Matrix3d Kinematics::OrthogonalRotationMatrix(double angle) {
     ).finished();
 }
 
+// calculate acceleration from two timed velocities
+isaac::MatrixXd Kinematics::RobotAccelerations(isaac::kaya::SpeedsAtTime previous, isaac::kaya::SpeedsAtTime current) {
+  std::chrono::duration<double> elapsed_seconds = current.time - previous.time;
+  return (isaac::MatrixXd(2, 1) <<
+    (current.speed_x - previous.speed_x) / elapsed_seconds.count(),
+    (current.speed_y - previous.speed_y) / elapsed_seconds.count()
+  ).finished();
+}
+
+// forward kinematics (from robot frame to global frame)
 isaac::MatrixXd Kinematics::RobotVelocities(isaac::MatrixXd wheel_velocities) {
     return orthogonal_rotation_matrix_inverse_ * wheel_constraints_inverse_ * wheel_radii_ * wheel_velocities;
 }
@@ -53,6 +63,7 @@ isaac::Matrix3d Kinematics::WheelRadii() {
     ).finished();
 }
 
+// inverse kinematics (from global frame to robot frame)
 isaac::MatrixXd Kinematics::WheelVelocities(isaac::MatrixXd robot_velocities) {
     return orthogonal_rotation_matrix_ * wheel_constraints_ * wheel_radii_inverse_ * robot_velocities;
 }
