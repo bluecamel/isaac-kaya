@@ -6,25 +6,25 @@ namespace isaac {
 namespace dynamixel {
 
 static const ControlTable kControlTable_MX_12W = {
-    24, // torque_enable
-    25, // led
-    26, // d_gain
-    27, // i_gain
-    28, // p_gain
-    30, // goal_position
-    32, // moving_speed
-    34, // torque_limit
-    36, // present_position
-    38, // present_speed
-    40, // present_load
-    42, // present_voltage
-    43, // present_temperature
-    44, // registered
-    46, // moving
-    47, // lock
-    48, // punch
-    50, // realtime_kick
-    73, // goal_acceleration
+    24,  // torque_enable
+    25,  // led
+    26,  // d_gain
+    27,  // i_gain
+    28,  // p_gain
+    30,  // goal_position
+    32,  // moving_speed
+    34,  // torque_limit
+    36,  // present_position
+    38,  // present_speed
+    40,  // present_load
+    42,  // present_voltage
+    43,  // present_temperature
+    44,  // registered
+    46,  // moving
+    47,  // lock
+    48,  // punch
+    50,  // realtime_kick
+    73,  // goal_acceleration
 };
 
 static const ControlValues kControlValues_MX_12W = {
@@ -40,5 +40,5 @@ static const ControlValues kControlValues_MX_12W = {
     1023,   // torque_limit_maximum
 };
 
-} // namespace dynamixel
-} // namspace isaac
+}  // namespace dynamixel
+}  // namespace isaac

@@ -9,7 +9,7 @@ license agreement from NVIDIA CORPORATION is strictly prohibited.
 """
 
 filegroup(
-    name = "robots",
-    data = glob(["*.json"]),
-    visibility = ["//visibility:public"],
+  name = "robots",
+  data = glob(["*.json"]),
+  visibility = ["//visibility:public"],
 )

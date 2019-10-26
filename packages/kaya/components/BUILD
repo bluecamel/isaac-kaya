@@ -29,12 +29,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 load("@com_nvidia_isaac//engine/build:isaac.bzl", "isaac_cc_library", "isaac_cc_module", "isaac_component")
 
 isaac_component(
-    name = "base_driver",
-    visibility = ["//visibility:public"],
-    deps = [
-      "@com_nvidia_isaac//engine/gems/state:io",
-      "@com_nvidia_isaac//messages/state:holonomic_base",
-      "//gems/dynamixel",
-      "//gems/kaya_kinematics"
-    ],
+  name = "base_driver",
+  visibility = ["//visibility:public"],
+  deps = [
+    "@com_nvidia_isaac//engine/gems/state:io",
+    "@com_nvidia_isaac//messages/state:holonomic_base",
+    "//gems/dynamixel",
+    "//gems/kaya_kinematics"
+  ]
 )

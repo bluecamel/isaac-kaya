@@ -29,37 +29,37 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 load("@com_nvidia_isaac//engine/build:isaac.bzl", "isaac_app", "isaac_cc_module", "isaac_subgraph")
 
 isaac_app(
-    name = "joystick",
-    app_json_file = "joystick.app.json",
-    data = [
-      "2d_kaya_subgraph",
-      "kaya_hardware_subgraph",
-      "//packages/kaya/apps/robots",
-      "@com_nvidia_isaac//packages/navigation/apps:holonomic_base_commander_subgraph",
-      "@com_nvidia_isaac//packages/navigation/apps:holonomic_base_imu_odometry_subgraph"
-    ],
-    modules = [
-      "kaya"
-    ],
+  name = "joystick-bkd",
+  app_json_file = "joystick.app.json",
+  data = [
+    "2d_kaya_subgraph",
+    "kaya_hardware_subgraph",
+    "//packages/kaya/apps/robots",
+    "@com_nvidia_isaac//packages/navigation/apps:holonomic_base_commander_subgraph",
+    "@com_nvidia_isaac//packages/navigation/apps:holonomic_base_imu_odometry_subgraph"
+  ],
+  modules = [
+    "kaya"
+  ],
 )
 
 isaac_subgraph(
-    name = "kaya_hardware_subgraph",
-    modules = [
-        "@com_nvidia_isaac//packages/imu",
-        "@com_nvidia_isaac//packages/kaya_base",
-        "@com_nvidia_isaac//packages/realsense",
-        "@com_nvidia_isaac//packages/viewers",
-    ],
-    subgraph = "kaya_hardware.subgraph.json",
-    visibility = ["//visibility:public"],
+  name = "kaya_hardware_subgraph",
+  modules = [
+    "@com_nvidia_isaac//packages/imu",
+    "@com_nvidia_isaac//packages/kaya_base",
+    "@com_nvidia_isaac//packages/realsense",
+    "@com_nvidia_isaac//packages/viewers"
+  ],
+  subgraph = "kaya_hardware.subgraph.json",
+  visibility = ["//visibility:public"],
 )
 
 isaac_subgraph(
-    name = "2d_kaya_subgraph",
-    modules = [
-        "@com_nvidia_isaac//packages/rgbd_processing",
-    ],
-    subgraph = "2d_kaya.subgraph.json",
-    visibility = ["//visibility:public"],
+  name = "2d_kaya_subgraph",
+  modules = [
+    "@com_nvidia_isaac//packages/rgbd_processing",
+  ],
+  subgraph = "2d_kaya.subgraph.json",
+  visibility = ["//visibility:public"],
 )

@@ -29,8 +29,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 load("@com_nvidia_isaac//engine/build:isaac.bzl", "isaac_cc_library", "isaac_cc_module", "isaac_component")
 
 isaac_cc_module(
-    name = "kaya",
-    deps = [
-        "//packages/kaya/components:base_driver"
-    ],
+  name = "kaya",
+  deps = [
+    "//packages/kaya/components:base_driver"
+  ],
 )
