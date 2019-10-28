@@ -41,8 +41,7 @@ class Kinematics {
  public:
   isaac::MatrixXd AngularVelocitiesToRpms(isaac::MatrixXd wheel_velocities);
   isaac::Matrix3d OrthogonalRotationMatrix(double angle);
-  isaac::MatrixXd RobotAccelerations(isaac::kaya::SpeedsAtTime previous,
-                                     isaac::kaya::SpeedsAtTime current);
+  isaac::MatrixXd RobotAccelerations(isaac::kaya::SpeedsAtTime previous, isaac::kaya::SpeedsAtTime current);
   isaac::MatrixXd RobotVelocities(isaac::MatrixXd wheel_velocities);
   isaac::MatrixXd RpmsToAngularVelocities(isaac::MatrixXd wheel_rpms);
   void SetConfiguration(KinematicsConfiguration _configuration);
