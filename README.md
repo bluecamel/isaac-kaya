@@ -96,14 +96,14 @@ The current speeds reported by the servos.
   - **current.servo_front_left_ticks** [*double*]: Current realtime ticks reported by the front left servo.
   - **current.servo_front_right_ticks** [*double*]: Current realtime ticks reported by the front right servo.
 
-**NOTE:** The following parameters are currently ignored: `max_safe_speed`, `max_angular_speed`, `debug_speed`, `debug_servos`.
+**NOTE:** The following parameters are currently ignored: `debug_speed`, `debug_servos`.
 
 ### Parameters
 - **baudrate** [*int*] [default=1000000]: Baud rate of the Dynamixel bus. This is the rate of information transfer.
 - **debug_mode** [*bool*] [default=false]: If true, the dynamixel driver will be very chatty will print out details about every command that is being run.  *This currently doesn't behave in the same way as `isaac.KayaBaseDriver`.*
 - **dynamixel_protocol_version** [*float*] [default=1.0]: The protocol version to use when communicatin with the Dynamixel motors (e.g. `1.0` or `2.0`).
-- **max_angular_speed** [*double*] [default=0.3]: Max turning rate.  **_Currently ignored._**
-- **max_safe_speed** [*double*] [default=0.3]: Max safe speed.  **_Currently ignored._**
+- **max_angular_speed** [*double*] [default=0.3]: Max turning rate.
+- **max_safe_speed** [*double*] [default=0.3]: Max safe speed.
 - **orthogonal_rotation_angle** [*double*] [default=0]: The angle of rotation between the robot frame and global frame.
 - **report_to_sight** [*bool*] [default=false]: Report messages and servo info to sight.
 - **servo_back** [*int*] [default=2]: Unique identifier for Dynamixel servo at back. Each motor needs to be assigned a unique ID using the software provided by Dynamixel.
