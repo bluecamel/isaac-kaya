@@ -24,7 +24,7 @@ To use this package, you can put your app configuration files in the `packages/k
 
 Everything under this directory operates in the same way as the `apps/kaya` directory in the SDK, but it can't reference configuration files in the SDK `apps` directory.  It can, however, reference configuration files in the SDK `packages` directory.
 
-There probably is a better way to do this, but for now it's easy enough for now.
+There probably is a better way to do this, but it's easy enough for now.
 
 ### Deploy
 
