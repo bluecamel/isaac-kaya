@@ -22,7 +22,7 @@ local_repository(
 
 To use this package, you can put your app configuration files in the `packages/kaya/apps` directory.
 
-Everything under this directory operates in the same way as the `apps/kaya` directory in the SDK, but it can't reference configuration files in the SDK `/apps` directory.  It can, however, reference configuration files in the SDK `packages` directory.
+Everything under this directory operates in the same way as the `apps/kaya` directory in the SDK, but it can't reference configuration files in the SDK `apps` directory.  It can, however, reference configuration files in the SDK `packages` directory.
 
 There probably is a better way to do this, but for now it's easy enough for now.
 
@@ -32,7 +32,7 @@ Deploying is similar to deploying from the SDK.  Instead of running `./engine/bu
 
 For example, deploy the joystick app:
 ```
-./deploy.sh --remote_user bluecamel -p //packages/kaya/apps:joystick-pkg -d jetpack42 -h 0.0.0.0
+./deploy.sh --remote_user bluecamel -p //packages/kaya/apps:joystick_debug-pkg -d jetpack42 -h 0.0.0.0
 ```
 
 Replace `bluecamel` with your username on the Kaya.  Replace `0.0.0.0` with the Kaya's IP address.
@@ -55,6 +55,45 @@ Replace `bluecamel` with your username on the Kaya.  Replace `0.0.0.0` with the 
   - **acceleration_x** [*double*]: Linear acceleration of the robot  in the global reference frame's x axis.  This is calculated from the current and previous velocities, as reported by the Dynamixel motors.
   - **acceleration_y** [*double*]: Linear acceleration of the robot  in the global reference frame's y axis.  This is calculated from the current and previous velocities, as reported by the Dynamixel motors.
 
+### Sight Channels
+These channels are reported to sight if the **report_to_sight** parameter is set to *true*.
+
+#### command
+Clamped input speeds and calculated servo speeds as well as the original command message.
+
+##### message [*HolonomicBaseControls: StateProto*]
+The holonomic command to be sent to the motors.
+  - **command.message.angular_speed** [*double*]: Angular speed of the robot in the global reference frame.
+  - **command.message.speed_x** [*double*]: Linear velocity of the robot in the global reference frame's x axis.
+  - **command.message.speed_y** [*double*]: Linear velocity of the robot in the global reference frame's y axis.
+
+##### safe_speed
+The speeds, clamped according to *max_safe_speed* and *max_angular_speed* parameters.
+  - **command.safe_speed.angle** [*double*]: Angular speed of the robot in the global reference frame.
+  - **command.safe_speed.x** [*double*]: Linear velocity of the robot in the global reference frame's x axis.
+  - **command.safe_speed.y** [*double*]: Linear velocity of the robot in the global reference frame's y axis.
+
+##### servo
+The calculated speeds to be commanded to the servos.
+  - **command.servo_back_rad_per_sec** [*double*]: Speed to set the back servo to (in rad/sec).
+  - **command.servo_front_left_rad_per_sec** [*double*]: Speed to set the front left servo to (in rad/sec).
+  - **command.servo_front_right_rad_per_sec** [*double*]: Speed to set the front right servo to (in rad/sec).
+
+#### current
+State reported by the servos.
+
+##### servo speeds
+The current speeds reported by the servos.
+  - **current.motor_back_rad_per_sec** [*double*]: Current speed reported by the back servo.
+  - **current.motor_front_left_rad_per_sec** [*double*]: Current speed reported by the front left servo.
+  - **current.motor_front_right_rad_per_sec** [*double*]: Current speed reported by the front right servo.
+
+##### ticks
+[Realtime ticks](http://emanual.robotis.com/docs/en/dxl/mx/mx-12w/#realtime-tick) reported by the servos.
+  - **current.servo_back_ticks** [*double*]: Current realtime ticks reported by the back servo.
+  - **current.servo_front_left_ticks** [*double*]: Current realtime ticks reported by the front left servo.
+  - **current.servo_front_right_ticks** [*double*]: Current realtime ticks reported by the front right servo.
+
 **NOTE:** The following parameters are currently ignored: `max_safe_speed`, `max_angular_speed`, `debug_speed`, `debug_servos`.
 
 ### Parameters
@@ -64,6 +103,7 @@ Replace `bluecamel` with your username on the Kaya.  Replace `0.0.0.0` with the 
 - **max_angular_speed** [*double*] [default=0.3]: Max turning rate.  **_Currently ignored._**
 - **max_safe_speed** [*double*] [default=0.3]: Max safe speed.  **_Currently ignored._**
 - **orthogonal_rotation_angle** [*double*] [default=0]: The angle of rotation between the robot frame and global frame.
+- **report_to_sight** [*bool*] [default=false]: Report messages and servo info to sight.
 - **servo_back** [*int*] [default=2]: Unique identifier for Dynamixel servo at back. Each motor needs to be assigned a unique ID using the software provided by Dynamixel.
 - **servo_front_left** [*int*] [default=1]: Unique identifier for Dynamixel servo at front left. Each motor needs to be assigned a unique ID using the software provided by Dynamixel.
 - **servo_front_right** [*int*] [default=3]: Unique identifier for Dynamixel servo at front right. Each motor needs to be assigned a unique ID using the software provided by Dynamixel.

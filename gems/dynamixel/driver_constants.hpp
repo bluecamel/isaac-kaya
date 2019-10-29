@@ -23,7 +23,7 @@ static const ControlTable kControlTable_MX_12W = {
     46,  // moving
     47,  // lock
     48,  // punch
-    50,  // realtime_kick
+    50,  // realtime_tick
     73,  // goal_acceleration
 };
 

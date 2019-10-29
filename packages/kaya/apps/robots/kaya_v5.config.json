@@ -1,11 +1,17 @@
 {
+  "commander.robot_remote": {
+    "isaac.navigation.RobotRemoteControl": {
+      "linear_speed_max": 1.5,
+      "angular_speed_max": 4.5
+    }
+  },
   "2d_kaya.kaya_hardware.kaya_driver": {
-    "isaac.Kaya.BaseDriver": {
+    "BaseDriver": {
       "wheel_radius": 0.04,
       "usb_port": "/dev/ttyUSB0",
-      "max_angular_speed": 3.5,
-      "max_safe_speed": 0.7,
-      "torque_limit": 0.3
+      "max_angular_speed": 4.5,
+      "max_safe_speed": 1.5,
+      "torque_limit": 0.7
     }
   },
   "2d_kaya.kaya_hardware.camera": {

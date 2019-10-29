@@ -8,8 +8,10 @@
 
 #include "engine/alice/alice_codelet.hpp"
 #include "engine/core/constants.hpp"
+#include "engine/core/logger.hpp"
 #include "engine/gems/state/io.hpp"
 #include "gems/dynamixel/driver.hpp"
+#include "gems/dynamixel/util.hpp"
 #include "gems/kaya_kinematics/kinematics.hpp"
 #include "messages/messages.hpp"
 #include "messages/state/holonomic_base.hpp"
@@ -22,12 +24,16 @@ class BaseDriver : public alice::Codelet {
  private:
   isaac::dynamixel::Driver dynamixel_driver_;
   isaac::kaya::Kinematics kinematics_;
+  double max_angular_speed_;
+  double max_safe_speed_;
   isaac::kaya::SpeedsAtTime previous_speeds_;
+  bool report_to_sight_;
   std::vector<int> servo_ids_;
 
   void ConfigureKinematics();
   void DynamixelStart();
   void DynamixelStop();
+  void LoadConfiguration();
   void LoadDynamixelDriver();
   void Move(messages::HolonomicBaseControls command);
   void Report(messages::HolonomicBaseControls command);
@@ -43,6 +49,7 @@ class BaseDriver : public alice::Codelet {
   ISAAC_PARAM(double, max_angular_speed, 0.3);
   ISAAC_PARAM(double, max_safe_speed, 0.3);
   ISAAC_PARAM(double, orthogonal_rotation_angle, 0);
+  ISAAC_PARAM(bool, report_to_sight, false);
   ISAAC_PARAM(int, servo_back, 2);
   ISAAC_PARAM(int, servo_front_left, 1);
   ISAAC_PARAM(int, servo_front_right, 3);

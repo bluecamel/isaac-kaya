@@ -1,18 +1,17 @@
 {
     "modules": [
+      "kaya",
       "@com_nvidia_isaac//packages/imu",
-      "@com_nvidia_isaac//packages/kaya_base",
       "@com_nvidia_isaac//packages/realsense",
       "@com_nvidia_isaac//packages/viewers"
     ],
     "config": {
       "kaya_driver": {
-        "isaac.kaya.BaseDriver": {
+        "BaseDriver": {
+          "debug_mode": false,
           "priority": 100,
           "tick_period": "100ms",
-          "baudrate": "1000000",
-          "max_safe_speed": 0.5,
-          "max_angular_speed": 2.0
+          "baudrate": "1000000"
         },
         "isaac.alice.Failsafe": {
           "name": "robot_failsafe"
@@ -63,7 +62,7 @@
               "type": "isaac::alice::MessageLedger"
             },
             {
-              "name": "isaac.kaya.BaseDriver",
+              "name": "BaseDriver",
               "type": "isaac::kaya::BaseDriver"
             },
             {
@@ -114,10 +113,10 @@
       "edges": [
         {
           "source": "subgraph/interface/base_command",
-          "target": "kaya_driver/isaac.kaya.BaseDriver/command"
+          "target": "kaya_driver/BaseDriver/command"
         },
         {
-          "source": "kaya_driver/isaac.kaya.BaseDriver/state",
+          "source": "kaya_driver/BaseDriver/state",
           "target": "subgraph/interface/base_state"
         },
         {

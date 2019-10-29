@@ -30,11 +30,11 @@ load("@com_nvidia_isaac//engine/build:isaac.bzl", "isaac_cc_library", "isaac_cc_
 
 isaac_component(
   name = "base_driver",
-  visibility = ["//visibility:public"],
   deps = [
     "@com_nvidia_isaac//engine/gems/state:io",
     "@com_nvidia_isaac//messages/state:holonomic_base",
     "//gems/dynamixel",
     "//gems/kaya_kinematics"
-  ]
+  ],
+  visibility = ["//visibility:public"]
 )

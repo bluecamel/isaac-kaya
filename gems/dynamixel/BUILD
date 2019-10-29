@@ -13,6 +13,7 @@ isaac_cc_library(
   ],
   visibility = ["//visibility:public"],
   deps = [
+    "@com_nvidia_isaac//engine/core",
     "@robotis//:dynamixel"
   ]
 )

@@ -1,0 +1,116 @@
+{
+    "name": "joystick_bkd",
+    "modules": [
+      "//packages/kaya"
+    ],
+    "config_files": [
+      "packages/kaya/apps/robots/kaya_v5.config.json"
+    ],
+    "config": {
+      "2d_kaya.kaya_hardware.kaya_driver": {
+        "BaseDriver": {
+          "debug_mode": false,
+          "report_to_sight": true
+        }
+      },
+      "odometry.odometry": {
+        "HolonomicBaseWheelImuOdometry": {
+          "use_imu": false
+        }
+      },
+      "websight": {
+        "WebsightServer": {
+          "webroot": "external/com_nvidia_isaac/packages/sight/webroot",
+          "assetroot": "../isaac_assets",
+          "ui_config": {
+            "windows": {
+              "Kaya BaseDriver - command - message": {
+                "renderer": "plot",
+                "channels": [
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/command.message.angular_speed" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/command.message.speed_x" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/command.message.speed_y" }
+                ]
+              },
+              "Kaya BaseDriver - command - safe speed": {
+                "renderer": "plot",
+                "channels": [
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/command.safe_speed.angle" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/command.safe_speed.x" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/command.safe_speed.y" }
+                ]
+              },
+              "Kaya BaseDriver - command - servo speeds": {
+                "renderer": "plot",
+                "channels": [
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/command.servo_back_rad_per_sec" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/command.servo_front_left_rad_per_sec" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/command.servo_front_right_rad_per_sec" }
+                ]
+              },
+              "Kaya BaseDriver - current - servo speeds": {
+                "renderer": "plot",
+                "channels": [
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/current.motor_back_rad_per_sec" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/current.motor_front_left_rad_per_sec" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/current.motor_front_right_rad_per_sec" }
+                ]
+              },
+              "Kaya BaseDriver - current - servo ticks": {
+                "renderer": "plot",
+                "channels": [
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/current.servo_back_ticks" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/current.servo_front_left_ticks" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/current.servo_front_right_ticks" }
+                ]
+              },
+              "Kaya BaseDriver - state - message": {
+                "renderer": "plot",
+                "channels": [
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/state.message.angular_speed" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/state.message.speed_x" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/state.message.speed_y" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/state.message.acceleration_x" },
+                  { "name": "joystick_bkd/2d_kaya.kaya_hardware.kaya_driver/BaseDriver/state.message.acceleration_y" }
+                ]
+              },
+              "Kaya - Odometry": {
+                "renderer": "plot",
+                "channels": [
+                  { "name": "joystick_bkd/odometry.odometry/HolonomicBaseWheelImuOdometry/state.pos_x" },
+                  { "name": "joystick_bkd/odometry.odometry/HolonomicBaseWheelImuOdometry/state.pos_y" }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "graph": {
+      "nodes": [
+        {
+          "name": "odometry",
+          "subgraph": "external/com_nvidia_isaac/packages/navigation/apps/holonomic_base_imu_odometry.subgraph.json"
+        },
+        {
+          "name": "2d_kaya",
+          "subgraph": "packages/kaya/apps/2d_kaya.subgraph.json"
+        },
+        {
+          "name": "commander",
+          "subgraph": "external/com_nvidia_isaac/packages/navigation/apps/holonomic_base_commander.subgraph.json"
+        }
+      ],
+      "edges": [
+        {
+          "source": "2d_kaya.subgraph/interface/base_state",
+          "target": "odometry.subgraph/interface/state"
+        },
+        {
+          "source": "commander.subgraph/interface/command",
+          "target": "2d_kaya.subgraph/interface/base_command"
+        }
+      ]
+    }
+  }
+  

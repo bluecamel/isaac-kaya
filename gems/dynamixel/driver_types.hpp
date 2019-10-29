@@ -24,7 +24,7 @@ struct ControlTable {
   int moving;
   int lock;
   int punch;
-  int realtime_kick;
+  int realtime_tick;
   int goal_acceleration;
 };
 
@@ -50,9 +50,10 @@ struct Configuration {
   float protocol_version;
 };
 
-struct ServoSpeed {
+template<class T>
+struct ServoValue {
   int servo_id;
-  int speed;
+  T value;
 };
 
 }  // namespace dynamixel
