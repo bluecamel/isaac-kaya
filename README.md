@@ -58,7 +58,7 @@ Replace `bluecamel` with your username on the Kaya.  Replace `0.0.0.0` with the 
 ### Sight Channels
 These channels are reported to sight if the **report_to_sight** parameter is set to *true*.
 
-![alt text](https://raw.githubusercontent.com/bluecamel/isaac-kaya/master/docs/png/channels.png)
+![alt text](https://github.com/bluecamel/isaac-kaya/raw/master/docs/png/channels.png)
 
 #### command
 Clamped input speeds and calculated servo speeds as well as the original command message.
