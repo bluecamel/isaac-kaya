@@ -15,7 +15,9 @@
       },
       "odometry.odometry": {
         "HolonomicBaseWheelImuOdometry": {
-          "use_imu": false
+          "use_imu": true,
+          "weight_imu_acceleration": 0.5,
+          "weight_imu_angular_speed": 0.5
         }
       },
       "websight": {
@@ -104,12 +106,16 @@
       ],
       "edges": [
         {
+          "source": "commander.subgraph/interface/command",
+          "target": "2d_kaya.subgraph/interface/base_command"
+        },
+        {
           "source": "2d_kaya.subgraph/interface/base_state",
           "target": "odometry.subgraph/interface/state"
         },
         {
-          "source": "commander.subgraph/interface/command",
-          "target": "2d_kaya.subgraph/interface/base_command"
+          "source": "2d_kaya.subgraph/interface/imu_raw",
+          "target": "odometry.subgraph/interface/imu_raw"
         }
       ]
     }
