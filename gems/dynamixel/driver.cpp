@@ -26,8 +26,8 @@ std::vector<ServoValue<int>> Driver::GetServoValuesInt(std::vector<int> &servo_i
 
   std::vector<ServoValue<int>> servo_values;
 
-  for (std::vector<int>::iterator i = servo_ids.begin(); i != servo_ids.end(); ++i) {
-    servo_id = *i;
+  for (int i = 0; i < servo_ids.size(); i++) {
+    servo_id = servo_ids[i];
 
     ServoValue<int> servo_value = {servo_id, 0};
 
@@ -130,11 +130,7 @@ dynamixel_sdk::PortHandler *Driver::GetPortHandler() {
 }
 
 std::vector<ServoValue<int>> Driver::GetPresentSpeeds(std::vector<int> &servo_ids) {
-  std::vector<ServoValue<int>> servo_speeds =
-      GetServoValuesInt(servo_ids, configuration_.control_table.moving_speed, "present speed");
-  return {{servo_ids.at(0), static_cast<int>(SpeedToRpm(servo_speeds.at(0).value))},
-          {servo_ids.at(1), static_cast<int>(SpeedToRpm(servo_speeds.at(1).value))},
-          {servo_ids.at(2), static_cast<int>(SpeedToRpm(servo_speeds.at(2).value))}};
+    return GetServoValuesInt(servo_ids, configuration_.control_table.moving_speed, "present speed");
 }
 
 std::vector<ServoValue<int>> Driver::GetRealtimeTicks(std::vector<int> &servo_ids) {
@@ -180,7 +176,7 @@ double Driver::SpeedToRpm(int speed) {
     return static_cast<double>(speed) * configuration_.control_values.moving_speed_rpm_unit;
   } else if (speed >= configuration_.control_values.moving_speed_ccw_minimum &&
              speed <= configuration_.control_values.moving_speed_ccw_maximum) {  // CCW
-    return -static_cast<double>(speed - configuration_.control_values.moving_speed_ccw_minimum) *
+    return static_cast<double>(speed) - configuration_.control_values.moving_speed_ccw_minimum *
            configuration_.control_values.moving_speed_rpm_unit;
   } else {
     return 0.0;

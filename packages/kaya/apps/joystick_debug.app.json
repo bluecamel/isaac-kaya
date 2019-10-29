@@ -77,6 +77,7 @@
               "Kaya - Odometry": {
                 "renderer": "plot",
                 "channels": [
+                  { "name": "joystick_bkd/odometry.odometry/HolonomicBaseWheelImuOdometry/state.heading" },
                   { "name": "joystick_bkd/odometry.odometry/HolonomicBaseWheelImuOdometry/state.pos_x" },
                   { "name": "joystick_bkd/odometry.odometry/HolonomicBaseWheelImuOdometry/state.pos_y" }
                 ]
