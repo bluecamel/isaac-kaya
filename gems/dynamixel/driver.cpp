@@ -6,13 +6,13 @@ namespace dynamixel {
 // private
 
 // TODO: make generic?
-isaac::MatrixXi Driver::GetServoValuesInt(const Eigen::Ref<const isaac::MatrixXi>& servo_ids, int control_table_address,
+isaac::Vector3i Driver::GetServoValuesInt(const Eigen::Ref<const isaac::Vector3i>& servo_ids, int control_table_address,
                                           std::string name) {
   uint8_t error;
   int result;
   uint16_t value;
 
-  isaac::MatrixXi servo_values(servo_ids.rows(), 1);
+  isaac::Vector3i servo_values(servo_ids.rows(), 1);
 
   for (int i = 0; i < servo_ids.rows(); i++) {
     if (configuration_.debug == true) {
@@ -45,7 +45,7 @@ isaac::MatrixXi Driver::GetServoValuesInt(const Eigen::Ref<const isaac::MatrixXi
   return servo_values;
 }
 
-void Driver::SetServoValuesInt(const Eigen::Ref<const isaac::MatrixXi>& servo_ids, const Eigen::Ref<const isaac::MatrixXi>& servo_values,
+void Driver::SetServoValuesInt(const Eigen::Ref<const isaac::Vector3i>& servo_ids, const Eigen::Ref<const isaac::Vector3i>& servo_values,
                                int control_table_address, std::string name) {
   ASSERT(servo_ids.rows() == servo_values.rows(), "Size of servo_ids and servo_values should match.");
 
@@ -111,11 +111,11 @@ dynamixel_sdk::PortHandler* Driver::GetPortHandler() {
   return dynamixel_sdk::PortHandler::getPortHandler(configuration_.device_name.c_str());
 }
 
-isaac::MatrixXi Driver::GetPresentSpeeds(const Eigen::Ref<const isaac::MatrixXi>& servo_ids) {
+isaac::Vector3i Driver::GetPresentSpeeds(const Eigen::Ref<const isaac::Vector3i>& servo_ids) {
   return GetServoValuesInt(servo_ids, configuration_.control_table.moving_speed, "present speed");
 }
 
-isaac::MatrixXi Driver::GetRealtimeTicks(const Eigen::Ref<const isaac::MatrixXi>& servo_ids) {
+isaac::Vector3i Driver::GetRealtimeTicks(const Eigen::Ref<const isaac::Vector3i>& servo_ids) {
   return GetServoValuesInt(servo_ids, configuration_.control_table.realtime_tick, "realtime tick");
 }
 
@@ -141,12 +141,12 @@ bool Driver::SetBaudRate() { return port_handler_->setBaudRate(configuration_.ba
 
 void Driver::SetConfiguration(Configuration& configuration) { configuration_ = configuration; }
 
-void Driver::SetMovingSpeeds(const Eigen::Ref<const isaac::MatrixXi>& servo_ids, const Eigen::Ref<const isaac::MatrixXi>& servo_values) {
+void Driver::SetMovingSpeeds(const Eigen::Ref<const isaac::Vector3i>& servo_ids, const Eigen::Ref<const isaac::Vector3i>& servo_values) {
   SetServoValuesInt(servo_ids, servo_values, configuration_.control_table.moving_speed, "moving speed");
 }
 
-void Driver::SetTorqueLimit(const Eigen::Ref<const isaac::MatrixXi>& servo_ids, int limit) {
-  isaac::MatrixXi servo_values(servo_ids.rows(), 1);
+void Driver::SetTorqueLimit(const Eigen::Ref<const isaac::Vector3i>& servo_ids, int limit) {
+  isaac::Vector3i servo_values;
   for (int i = 0; i < servo_ids.rows(); i++) {
     servo_values(i, 0) = limit;
   }
@@ -166,7 +166,7 @@ double Driver::SpeedToRpm(int& speed) {
   }
 }
 
-void Driver::ToggleTorque(const Eigen::Ref<const isaac::MatrixXi>& servo_ids, bool enabled) {
+void Driver::ToggleTorque(const Eigen::Ref<const isaac::Vector3i>& servo_ids, bool enabled) {
   uint8_t error;
   int result;
   int torque_enable_value =

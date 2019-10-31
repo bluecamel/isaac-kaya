@@ -3,7 +3,7 @@
 namespace isaac {
 namespace kaya {
 
-isaac::MatrixXd Kinematics::AngularVelocitiesToRpms(const Eigen::Ref<const isaac::MatrixXd>& wheel_velocities) {
+isaac::Vector3d Kinematics::AngularVelocitiesToRpms(const Eigen::Ref<const isaac::Vector3d>& wheel_velocities) {
   return wheel_velocities * angular_velocities_to_rpms_factor_;
 }
 
@@ -16,20 +16,20 @@ isaac::Matrix3d Kinematics::OrthogonalRotationMatrix(double &angle) {
 }
 
 // calculate acceleration from two timed velocities
-isaac::MatrixXd Kinematics::RobotAccelerations(isaac::kaya::SpeedsAtTime& previous, isaac::kaya::SpeedsAtTime& current) {
+isaac::Vector2d Kinematics::RobotAccelerations(isaac::kaya::SpeedsAtTime& previous, isaac::kaya::SpeedsAtTime& current) {
   std::chrono::duration<double> elapsed_seconds = current.time - previous.time;
-  return (isaac::MatrixXd(2, 1) <<
+  return (isaac::VectorXd(2) <<
           (current.speed_x - previous.speed_x),
           (current.speed_y - previous.speed_y)
       ).finished() * (1 / elapsed_seconds.count());
 }
 
 // forward kinematics (from robot frame to global frame)
-isaac::MatrixXd Kinematics::RobotVelocities(const Eigen::Ref<const isaac::MatrixXd>& wheel_velocities) {
+isaac::Vector3d Kinematics::RobotVelocities(const Eigen::Ref<const isaac::Vector3d>& wheel_velocities) {
   return robot_velocities_factor_ * wheel_velocities;
 }
 
-isaac::MatrixXd Kinematics::RpmsToAngularVelocities(const Eigen::Ref<const isaac::MatrixXd>& wheel_rpms) {
+isaac::Vector3d Kinematics::RpmsToAngularVelocities(const Eigen::Ref<const isaac::Vector3d>& wheel_rpms) {
   return wheel_rpms * rpms_to_angular_velocities_factor_;
 }
 
@@ -65,7 +65,7 @@ isaac::Matrix3d Kinematics::WheelRadii() {
 }
 
 // inverse kinematics (from global frame to robot frame)
-isaac::MatrixXd Kinematics::WheelVelocities(const Eigen::Ref<const isaac::MatrixXd>& robot_velocities) {
+isaac::Vector3d Kinematics::WheelVelocities(const Eigen::Ref<const isaac::Vector3d>& robot_velocities) {
   return wheel_velocities_factor_ * robot_velocities;
 }
 

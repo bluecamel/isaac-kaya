@@ -40,15 +40,15 @@ class Kinematics {
   isaac::Matrix3d wheel_velocities_factor_;
 
  public:
-  isaac::MatrixXd AngularVelocitiesToRpms(const Eigen::Ref<const isaac::MatrixXd>& wheel_velocities);
+  isaac::Vector3d AngularVelocitiesToRpms(const Eigen::Ref<const isaac::Vector3d>& wheel_velocities);
   isaac::Matrix3d OrthogonalRotationMatrix(double& angle);
-  isaac::MatrixXd RobotAccelerations(isaac::kaya::SpeedsAtTime& previous, isaac::kaya::SpeedsAtTime &current);
-  isaac::MatrixXd RobotVelocities(const Eigen::Ref<const isaac::MatrixXd>& wheel_velocities);
-  isaac::MatrixXd RpmsToAngularVelocities(const Eigen::Ref<const isaac::MatrixXd>& wheel_rpms);
+  isaac::Vector2d RobotAccelerations(isaac::kaya::SpeedsAtTime& previous, isaac::kaya::SpeedsAtTime &current);
+  isaac::Vector3d RobotVelocities(const Eigen::Ref<const isaac::Vector3d>& wheel_velocities);
+  isaac::Vector3d RpmsToAngularVelocities(const Eigen::Ref<const isaac::Vector3d>& wheel_rpms);
   void SetConfiguration(KinematicsConfiguration& configuration);
   isaac::Matrix3d WheelConstraints();
   isaac::Matrix3d WheelRadii();
-  isaac::MatrixXd WheelVelocities(const Eigen::Ref<const isaac::MatrixXd>& robot_velocities);
+  isaac::Vector3d WheelVelocities(const Eigen::Ref<const isaac::Vector3d>& robot_velocities);
 };
 
 }  // namespace kaya

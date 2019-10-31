@@ -25,7 +25,7 @@ class BaseDriver : public alice::Codelet {
   double max_safe_speed_;
   isaac::kaya::SpeedsAtTime previous_speeds_;
   bool report_messages_to_sight;
-  isaac::MatrixXi servo_ids_;
+  isaac::Vector3i servo_ids_;
 
   void ConfigureKinematics();
   void DynamixelStart();

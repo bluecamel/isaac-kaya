@@ -75,7 +75,7 @@ void BaseDriver::DynamixelStop() {
 }
 
 void BaseDriver::Move(messages::HolonomicBaseControls& command) {
-  isaac::MatrixXd robot_velocities(3, 1);
+  isaac::Vector3d robot_velocities;
   robot_velocities << clamp(command.speed_x(), -max_safe_speed_, max_safe_speed_),
       clamp(command.speed_y(), -max_safe_speed_, max_safe_speed_),
       clamp(command.angular_speed(), -max_angular_speed_, max_angular_speed_);
@@ -95,13 +95,13 @@ void BaseDriver::Move(messages::HolonomicBaseControls& command) {
                 robot_velocities(2, 0));
   }
 
-  isaac::MatrixXd wheel_velocities(3, 1);
+  isaac::Vector3d wheel_velocities;
   wheel_velocities = kinematics_.WheelVelocities(robot_velocities);
 
-  isaac::MatrixXd wheel_rpms(3, 1);
+  isaac::Vector3d wheel_rpms;
   wheel_rpms = kinematics_.AngularVelocitiesToRpms(wheel_velocities);
 
-  isaac::MatrixXi servo_values(3, 1);
+  isaac::Vector3i servo_values;
   servo_values << dynamixel_driver_.RpmToSpeed(wheel_rpms(0, 0)), dynamixel_driver_.RpmToSpeed(wheel_rpms(1, 0)),
       dynamixel_driver_.RpmToSpeed(wheel_rpms(2, 0));
 
@@ -123,24 +123,24 @@ void BaseDriver::Move(messages::HolonomicBaseControls& command) {
 }
 
 void BaseDriver::Report(messages::HolonomicBaseControls& command) {
-  isaac::MatrixXi servo_speeds(3, 1);
+  isaac::Vector3i servo_speeds;
   servo_speeds = dynamixel_driver_.GetPresentSpeeds(servo_ids_);
 
   std::chrono::time_point<std::chrono::system_clock> current_time = std::chrono::system_clock::now();
 
-  isaac::MatrixXd wheel_rpms(3, 1);
+  isaac::Vector3d wheel_rpms;
   wheel_rpms << dynamixel_driver_.SpeedToRpm(servo_speeds(0, 0)), dynamixel_driver_.SpeedToRpm(servo_speeds(1, 0)),
       dynamixel_driver_.SpeedToRpm(servo_speeds(2, 0));
 
-  isaac::MatrixXd wheel_velocities(3, 1);
+  isaac::Vector3d wheel_velocities;
   wheel_velocities = kinematics_.RpmsToAngularVelocities(wheel_rpms);
 
-  isaac::MatrixXd robot_velocities(3, 1);
+  isaac::Vector3d robot_velocities;
   robot_velocities = kinematics_.RobotVelocities(wheel_velocities);
 
   isaac::kaya::SpeedsAtTime current_speeds = {robot_velocities(0, 0), robot_velocities(1, 0), current_time};
 
-  isaac::MatrixXd robot_accelerations(3, 1);
+  isaac::Vector2d robot_accelerations;
   robot_accelerations = kinematics_.RobotAccelerations(previous_speeds_, current_speeds);
 
   previous_speeds_ = current_speeds;
@@ -159,7 +159,7 @@ void BaseDriver::Report(messages::HolonomicBaseControls& command) {
   show("current.motor_front_left_rad_per_sec", wheel_velocities(0, 0));
   show("current.motor_front_right_rad_per_sec", wheel_velocities(2, 0));
 
-  isaac::MatrixXi servo_ticks(3, 1);
+  isaac::Vector3i servo_ticks;
   servo_ticks = dynamixel_driver_.GetRealtimeTicks(servo_ids_);
 
   show("current.servo_back_ticks", servo_ticks(1, 0));
