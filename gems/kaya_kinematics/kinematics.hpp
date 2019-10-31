@@ -31,11 +31,13 @@ class Kinematics {
   KinematicsConfiguration configuration_;
   isaac::Matrix3d orthogonal_rotation_matrix_;
   isaac::Matrix3d orthogonal_rotation_matrix_inverse_;
+  isaac::Matrix3d robot_velocities_factor_;
   double rpms_to_angular_velocities_factor_;
   isaac::Matrix3d wheel_constraints_;
   isaac::Matrix3d wheel_constraints_inverse_;
   isaac::Matrix3d wheel_radii_;
   isaac::Matrix3d wheel_radii_inverse_;
+  isaac::Matrix3d wheel_velocities_factor_;
 
  public:
   isaac::MatrixXd AngularVelocitiesToRpms(const Eigen::Ref<const isaac::MatrixXd>& wheel_velocities);

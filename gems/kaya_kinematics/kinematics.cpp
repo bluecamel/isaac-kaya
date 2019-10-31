@@ -19,14 +19,14 @@ isaac::Matrix3d Kinematics::OrthogonalRotationMatrix(double &angle) {
 isaac::MatrixXd Kinematics::RobotAccelerations(isaac::kaya::SpeedsAtTime& previous, isaac::kaya::SpeedsAtTime& current) {
   std::chrono::duration<double> elapsed_seconds = current.time - previous.time;
   return (isaac::MatrixXd(2, 1) <<
-          (current.speed_x - previous.speed_x) / elapsed_seconds.count(), // x
-          (current.speed_y - previous.speed_y) / elapsed_seconds.count() // y
-      ).finished();
+          (current.speed_x - previous.speed_x), // x
+          (current.speed_y - previous.speed_y) // y
+      ).finished() * (1 / elapsed_seconds.count());
 }
 
 // forward kinematics (from robot frame to global frame)
 isaac::MatrixXd Kinematics::RobotVelocities(const Eigen::Ref<const isaac::MatrixXd>& wheel_velocities) {
-  return orthogonal_rotation_matrix_inverse_ * wheel_constraints_inverse_ * wheel_radii_ * wheel_velocities;
+  return robot_velocities_factor_ * wheel_velocities;
 }
 
 isaac::MatrixXd Kinematics::RpmsToAngularVelocities(const Eigen::Ref<const isaac::MatrixXd>& wheel_rpms) {
@@ -40,10 +40,12 @@ void Kinematics::SetConfiguration(KinematicsConfiguration& configuration) {
   rpms_to_angular_velocities_factor_ = M_PI / 30;
   orthogonal_rotation_matrix_ = OrthogonalRotationMatrix(configuration_.orthogonal_rotation_angle);
   orthogonal_rotation_matrix_inverse_ = OrthogonalRotationMatrix(configuration_.orthogonal_rotation_angle).inverse();
+  robot_velocities_factor_ = orthogonal_rotation_matrix_inverse_ * wheel_constraints_inverse_ * wheel_radii_;
   wheel_constraints_ = WheelConstraints();
   wheel_constraints_inverse_ = WheelConstraints().inverse();
   wheel_radii_ = WheelRadii();
   wheel_radii_inverse_ = WheelRadii().inverse();
+  wheel_velocities_factor_ = orthogonal_rotation_matrix_ * wheel_constraints_ * wheel_radii_inverse_;
 }
 
 isaac::Matrix3d Kinematics::WheelConstraints() {
@@ -64,7 +66,7 @@ isaac::Matrix3d Kinematics::WheelRadii() {
 
 // inverse kinematics (from global frame to robot frame)
 isaac::MatrixXd Kinematics::WheelVelocities(const Eigen::Ref<const isaac::MatrixXd>& robot_velocities) {
-  return orthogonal_rotation_matrix_ * wheel_constraints_ * wheel_radii_inverse_ * robot_velocities;
+  return wheel_velocities_factor_ * robot_velocities;
 }
 
 }  // namespace kaya
