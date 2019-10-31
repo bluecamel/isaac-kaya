@@ -10,7 +10,7 @@
       "2d_kaya.kaya_hardware.kaya_driver": {
         "BaseDriver": {
           "debug_mode": false,
-          "report_to_sight": true
+          "report_messages_to_sight": true
         }
       },
       "odometry.odometry": {

@@ -3,7 +3,6 @@
 #include <chrono>
 #include <cmath>
 #include <ctime>
-#include <iostream>
 #include "engine/core/math/types.hpp"
 
 namespace isaac {
@@ -39,15 +38,15 @@ class Kinematics {
   isaac::Matrix3d wheel_radii_inverse_;
 
  public:
-  isaac::MatrixXd AngularVelocitiesToRpms(isaac::MatrixXd wheel_velocities);
-  isaac::Matrix3d OrthogonalRotationMatrix(double angle);
-  isaac::MatrixXd RobotAccelerations(isaac::kaya::SpeedsAtTime previous, isaac::kaya::SpeedsAtTime current);
-  isaac::MatrixXd RobotVelocities(isaac::MatrixXd wheel_velocities);
-  isaac::MatrixXd RpmsToAngularVelocities(isaac::MatrixXd wheel_rpms);
-  void SetConfiguration(KinematicsConfiguration _configuration);
+  isaac::MatrixXd AngularVelocitiesToRpms(const Eigen::Ref<const isaac::MatrixXd>& wheel_velocities);
+  isaac::Matrix3d OrthogonalRotationMatrix(double& angle);
+  isaac::MatrixXd RobotAccelerations(isaac::kaya::SpeedsAtTime& previous, isaac::kaya::SpeedsAtTime &current);
+  isaac::MatrixXd RobotVelocities(const Eigen::Ref<const isaac::MatrixXd>& wheel_velocities);
+  isaac::MatrixXd RpmsToAngularVelocities(const Eigen::Ref<const isaac::MatrixXd>& wheel_rpms);
+  void SetConfiguration(KinematicsConfiguration& configuration);
   isaac::Matrix3d WheelConstraints();
   isaac::Matrix3d WheelRadii();
-  isaac::MatrixXd WheelVelocities(isaac::MatrixXd robot_velocities);
+  isaac::MatrixXd WheelVelocities(const Eigen::Ref<const isaac::MatrixXd>& robot_velocities);
 };
 
 }  // namespace kaya

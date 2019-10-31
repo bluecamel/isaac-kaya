@@ -46,7 +46,7 @@ void BaseDriver::LoadConfiguration() {
   max_angular_speed_ = get_max_angular_speed();
   max_safe_speed_ = get_max_safe_speed();
   previous_speeds_ = {0.0, 0.0, std::chrono::system_clock::now()};
-  report_to_sight_ = get_report_to_sight();
+  report_messages_to_sight = get_report_messages_to_sight();
   ConfigureKinematics();
 }
 
@@ -57,7 +57,7 @@ void BaseDriver::LoadDynamixelDriver() {
 
   dynamixel_driver_.SetConfiguration(dynamixel_configuration);
 
-  servo_ids_ = {get_servo_front_left(), get_servo_back(), get_servo_front_right()};
+  servo_ids_ = (isaac::MatrixXi(3, 1) << get_servo_front_left(), get_servo_back(), get_servo_front_right()).finished();
 }
 
 void BaseDriver::DynamixelStart() {
@@ -74,23 +74,25 @@ void BaseDriver::DynamixelStop() {
   dynamixel_driver_.Disconnect();
 }
 
-void BaseDriver::Move(messages::HolonomicBaseControls command) {
+void BaseDriver::Move(messages::HolonomicBaseControls& command) {
   isaac::MatrixXd robot_velocities(3, 1);
-  robot_velocities <<
-      clamp(command.speed_x(), -max_safe_speed_, max_safe_speed_),
+  robot_velocities << clamp(command.speed_x(), -max_safe_speed_, max_safe_speed_),
       clamp(command.speed_y(), -max_safe_speed_, max_safe_speed_),
       clamp(command.angular_speed(), -max_angular_speed_, max_angular_speed_);
-  
-  if (std::abs(robot_velocities(0, 0)) < std::abs(command.speed_x())) {
-    LOG_WARNING("Forward speed command is out of safe bounds. Clamped from %f to %f.", command.speed_x(), robot_velocities(0, 0));
+
+  if (robot_velocities(0, 0) != command.speed_x()) {
+    LOG_WARNING("Forward speed command is out of safe bounds. Clamped from %f to %f.", command.speed_x(),
+                robot_velocities(0, 0));
   }
 
-  if (std::abs(robot_velocities(1, 0)) < std::abs(command.speed_y())) {
-    LOG_WARNING("Sideway speed command is out of safe bounds. Clamped from %f to %f.", command.speed_y(), robot_velocities(1, 0));
+  if (robot_velocities(1, 0) < command.speed_y()) {
+    LOG_WARNING("Sideway speed command is out of safe bounds. Clamped from %f to %f.", command.speed_y(),
+                robot_velocities(1, 0));
   }
 
-  if (std::abs(robot_velocities(1, 0)) < std::abs(command.speed_y())) {
-    LOG_WARNING("Angular speed command is out of safe bounds. Clamped from %f to %f.", command.angular_speed(), robot_velocities(2, 0));
+  if (robot_velocities(1, 0) < command.speed_y()) {
+    LOG_WARNING("Angular speed command is out of safe bounds. Clamped from %f to %f.", command.angular_speed(),
+                robot_velocities(2, 0));
   }
 
   isaac::MatrixXd wheel_velocities(3, 1);
@@ -99,36 +101,36 @@ void BaseDriver::Move(messages::HolonomicBaseControls command) {
   isaac::MatrixXd wheel_rpms(3, 1);
   wheel_rpms << kinematics_.AngularVelocitiesToRpms(wheel_velocities);
 
-  std::vector<isaac::dynamixel::ServoValue<int>> servo_speeds = {
-      {servo_ids_[0], dynamixel_driver_.RpmToSpeed(wheel_rpms(0, 0))},
-      {servo_ids_[1], dynamixel_driver_.RpmToSpeed(wheel_rpms(1, 0))},
-      {servo_ids_[2], dynamixel_driver_.RpmToSpeed(wheel_rpms(2, 0))}};
+  isaac::MatrixXi servo_values(3, 1);
+  servo_values << dynamixel_driver_.RpmToSpeed(wheel_rpms(0, 0)), dynamixel_driver_.RpmToSpeed(wheel_rpms(1, 0)),
+      dynamixel_driver_.RpmToSpeed(wheel_rpms(2, 0));
 
-  dynamixel_driver_.SetMovingSpeeds(servo_speeds);
+  dynamixel_driver_.SetMovingSpeeds(servo_ids_, servo_values);
 
-  if (report_to_sight_) {
-    show("command.safe_speed.angle", robot_velocities(2, 0));
-    show("command.safe_speed.x", robot_velocities(0, 0));
-    show("command.safe_speed.y", robot_velocities(1, 0));
-    show("command.servo_back_rad_per_sec", wheel_velocities(1, 0));
-    show("command.servo_front_left_rad_per_sec", wheel_velocities(0, 0));
-    show("command.servo_front_right_rad_per_sec", wheel_velocities(2, 0));
+  // report to sight
+  show("command.safe_speed.angle", robot_velocities(2, 0));
+  show("command.safe_speed.x", robot_velocities(0, 0));
+  show("command.safe_speed.y", robot_velocities(1, 0));
+  show("command.servo_back_rad_per_sec", wheel_velocities(1, 0));
+  show("command.servo_front_left_rad_per_sec", wheel_velocities(0, 0));
+  show("command.servo_front_right_rad_per_sec", wheel_velocities(2, 0));
 
+  if (report_messages_to_sight) {
     show("command.message.angular_speed", command.angular_speed());
     show("command.message.speed_x", command.speed_x());
     show("command.message.speed_y", command.speed_y());
   }
 }
 
-void BaseDriver::Report(messages::HolonomicBaseControls command) {
-  std::vector<isaac::dynamixel::ServoValue<int>> servo_speeds = dynamixel_driver_.GetPresentSpeeds(servo_ids_);
+void BaseDriver::Report(messages::HolonomicBaseControls& command) {
+  isaac::MatrixXi servo_speeds(3, 1);
+  servo_speeds << dynamixel_driver_.GetPresentSpeeds(servo_ids_);
+
   std::chrono::time_point<std::chrono::system_clock> current_time = std::chrono::system_clock::now();
 
   isaac::MatrixXd wheel_rpms(3, 1);
-  wheel_rpms <<
-      dynamixel_driver_.SpeedToRpm(servo_speeds.at(0).value),
-      dynamixel_driver_.SpeedToRpm(servo_speeds.at(1).value),
-      dynamixel_driver_.SpeedToRpm(servo_speeds.at(2).value);
+  wheel_rpms << dynamixel_driver_.SpeedToRpm(servo_speeds(0, 0)), dynamixel_driver_.SpeedToRpm(servo_speeds(1, 0)),
+      dynamixel_driver_.SpeedToRpm(servo_speeds(2, 0));
 
   isaac::MatrixXd wheel_velocities(3, 1);
   wheel_velocities << kinematics_.RpmsToAngularVelocities(wheel_rpms);
@@ -153,16 +155,18 @@ void BaseDriver::Report(messages::HolonomicBaseControls command) {
   tx_state().publish();
 
   // report to sight
-  if (report_to_sight_) {
-    show("current.motor_back_rad_per_sec", wheel_velocities(1, 0));
-    show("current.motor_front_left_rad_per_sec", wheel_velocities(0, 0));
-    show("current.motor_front_right_rad_per_sec", wheel_velocities(2, 0));
+  show("current.motor_back_rad_per_sec", wheel_velocities(1, 0));
+  show("current.motor_front_left_rad_per_sec", wheel_velocities(0, 0));
+  show("current.motor_front_right_rad_per_sec", wheel_velocities(2, 0));
 
-    std::vector<isaac::dynamixel::ServoValue<int>> servo_ticks = dynamixel_driver_.GetRealtimeTicks(servo_ids_);
-    show("current.servo_back_ticks", servo_ticks.at(1).value);
-    show("current.servo_front_left_ticks", servo_ticks.at(0).value);
-    show("current.servo_front_right_ticks", servo_ticks.at(2).value);
+  isaac::MatrixXi servo_ticks(3, 1);
+  servo_ticks << dynamixel_driver_.GetRealtimeTicks(servo_ids_);
 
+  show("current.servo_back_ticks", servo_ticks(1, 0));
+  show("current.servo_front_left_ticks", servo_ticks(0, 0));
+  show("current.servo_front_right_ticks", servo_ticks(2, 0));
+
+  if (report_messages_to_sight) {
     show("state.message.angular_speed", state.angular_speed());
     show("state.message.speed_x", state.speed_x());
     show("state.message.speed_y", state.speed_y());
@@ -172,4 +176,4 @@ void BaseDriver::Report(messages::HolonomicBaseControls command) {
 }
 
 }  // namespace kaya
-}  // namespace kaya
+}  // namespace isaac

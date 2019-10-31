@@ -1,14 +1,13 @@
 #include "kinematics.hpp"
-#include <iostream>
 
 namespace isaac {
 namespace kaya {
 
-isaac::MatrixXd Kinematics::AngularVelocitiesToRpms(isaac::MatrixXd wheel_velocities) {
+isaac::MatrixXd Kinematics::AngularVelocitiesToRpms(const Eigen::Ref<const isaac::MatrixXd>& wheel_velocities) {
   return wheel_velocities * angular_velocities_to_rpms_factor_;
 }
 
-isaac::Matrix3d Kinematics::OrthogonalRotationMatrix(double angle) {
+isaac::Matrix3d Kinematics::OrthogonalRotationMatrix(double &angle) {
   return (isaac::MatrixXd(3, 3) <<
           std::cos(angle), std::sin(angle), 0,
           -std::sin(angle), std::cos(angle), 0,
@@ -17,7 +16,7 @@ isaac::Matrix3d Kinematics::OrthogonalRotationMatrix(double angle) {
 }
 
 // calculate acceleration from two timed velocities
-isaac::MatrixXd Kinematics::RobotAccelerations(isaac::kaya::SpeedsAtTime previous, isaac::kaya::SpeedsAtTime current) {
+isaac::MatrixXd Kinematics::RobotAccelerations(isaac::kaya::SpeedsAtTime& previous, isaac::kaya::SpeedsAtTime& current) {
   std::chrono::duration<double> elapsed_seconds = current.time - previous.time;
   return (isaac::MatrixXd(2, 1) <<
           (current.speed_x - previous.speed_x) / elapsed_seconds.count(), // x
@@ -26,15 +25,15 @@ isaac::MatrixXd Kinematics::RobotAccelerations(isaac::kaya::SpeedsAtTime previou
 }
 
 // forward kinematics (from robot frame to global frame)
-isaac::MatrixXd Kinematics::RobotVelocities(isaac::MatrixXd wheel_velocities) {
+isaac::MatrixXd Kinematics::RobotVelocities(const Eigen::Ref<const isaac::MatrixXd>& wheel_velocities) {
   return orthogonal_rotation_matrix_inverse_ * wheel_constraints_inverse_ * wheel_radii_ * wheel_velocities;
 }
 
-isaac::MatrixXd Kinematics::RpmsToAngularVelocities(isaac::MatrixXd wheel_rpms) {
+isaac::MatrixXd Kinematics::RpmsToAngularVelocities(const Eigen::Ref<const isaac::MatrixXd>& wheel_rpms) {
   return wheel_rpms * rpms_to_angular_velocities_factor_;
 }
 
-void Kinematics::SetConfiguration(KinematicsConfiguration configuration) {
+void Kinematics::SetConfiguration(KinematicsConfiguration& configuration) {
   configuration_ = configuration;
 
   angular_velocities_to_rpms_factor_ = 30 / M_PI;
@@ -64,7 +63,7 @@ isaac::Matrix3d Kinematics::WheelRadii() {
 }
 
 // inverse kinematics (from global frame to robot frame)
-isaac::MatrixXd Kinematics::WheelVelocities(isaac::MatrixXd robot_velocities) {
+isaac::MatrixXd Kinematics::WheelVelocities(const Eigen::Ref<const isaac::MatrixXd>& robot_velocities) {
   return orthogonal_rotation_matrix_ * wheel_constraints_ * wheel_radii_inverse_ * robot_velocities;
 }
 

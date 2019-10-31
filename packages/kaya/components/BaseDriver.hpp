@@ -2,9 +2,6 @@
 
 #include <chrono>
 #include <ctime>
-#include <iostream>
-#include <string>
-#include <vector>
 
 #include "engine/alice/alice_codelet.hpp"
 #include "engine/core/constants.hpp"
@@ -27,16 +24,16 @@ class BaseDriver : public alice::Codelet {
   double max_angular_speed_;
   double max_safe_speed_;
   isaac::kaya::SpeedsAtTime previous_speeds_;
-  bool report_to_sight_;
-  std::vector<int> servo_ids_;
+  bool report_messages_to_sight;
+  isaac::MatrixXi servo_ids_;
 
   void ConfigureKinematics();
   void DynamixelStart();
   void DynamixelStop();
   void LoadConfiguration();
   void LoadDynamixelDriver();
-  void Move(messages::HolonomicBaseControls command);
-  void Report(messages::HolonomicBaseControls command);
+  void Move(messages::HolonomicBaseControls& command);
+  void Report(messages::HolonomicBaseControls& command);
 
  public:
   void tick() override;
@@ -49,7 +46,7 @@ class BaseDriver : public alice::Codelet {
   ISAAC_PARAM(double, max_angular_speed, 0.3);
   ISAAC_PARAM(double, max_safe_speed, 0.3);
   ISAAC_PARAM(double, orthogonal_rotation_angle, 0);
-  ISAAC_PARAM(bool, report_to_sight, false);
+  ISAAC_PARAM(bool, report_messages_to_sight, false);
   ISAAC_PARAM(int, servo_back, 2);
   ISAAC_PARAM(int, servo_front_left, 1);
   ISAAC_PARAM(int, servo_front_right, 3);
