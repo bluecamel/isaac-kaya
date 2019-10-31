@@ -19,8 +19,8 @@ isaac::Matrix3d Kinematics::OrthogonalRotationMatrix(double &angle) {
 isaac::MatrixXd Kinematics::RobotAccelerations(isaac::kaya::SpeedsAtTime& previous, isaac::kaya::SpeedsAtTime& current) {
   std::chrono::duration<double> elapsed_seconds = current.time - previous.time;
   return (isaac::MatrixXd(2, 1) <<
-          (current.speed_x - previous.speed_x), // x
-          (current.speed_y - previous.speed_y) // y
+          (current.speed_x - previous.speed_x),
+          (current.speed_y - previous.speed_y)
       ).finished() * (1 / elapsed_seconds.count());
 }
 
