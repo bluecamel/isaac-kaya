@@ -31,7 +31,7 @@ workspace(name = "dynamixel")
 # Point following dependency to Isaac SDK night Release 0528 downloaded from https://developer.nvidia.com/isaac/downloads
 local_repository(
     name = "com_nvidia_isaac",
-    path = "ISAAC_SDK_PATH",
+    path = "/bluecamel/isaac",
 )
 
 load("@com_nvidia_isaac//third_party:engine.bzl", "isaac_engine_workspace")

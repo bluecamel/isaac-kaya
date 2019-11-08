@@ -1,0 +1,84 @@
+{
+  "modules": [
+    "@com_nvidia_isaac//packages/navigation"
+  ],
+  "config": {
+    "virtual_gamepad_bridge": {
+      "isaac.navigation.VirtualGamepadBridge": {
+        "tick_period": "100ms"
+      }
+    }
+  },
+  "graph": {
+    "nodes": [
+      {
+        "name": "subgraph",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "interface",
+            "type": "isaac::alice::Subgraph"
+          }
+        ]
+      },
+      {
+        "name": "virtual_gamepad_bridge",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "isaac.navigation.VirtualGamepadBridge",
+            "type": "isaac::navigation::VirtualGamepadBridge"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "subgraph/interface/request",
+        "target": "virtual_gamepad_bridge/isaac.navigation.VirtualGamepadBridge/request"
+      },
+      {
+        "source": "virtual_gamepad_bridge/isaac.navigation.VirtualGamepadBridge/joystick",
+        "target": "subgraph/interface/joystick"
+      }
+      {
+        "source": "kaya_hardware.subgraph/interface/realsense_depth",
+        "target": "image_flattening/isaac.alice.Throttle/input"
+      },
+      {
+        "source": "image_flattening/isaac.alice.Throttle/output",
+        "target": "image_flattening/isaac.rgbd_processing.DepthImageFlattening/depth"
+      },
+      {
+        "source": "image_flattening/isaac.rgbd_processing.DepthImageFlattening/flatscan",
+        "target": "subgraph/interface/flatscan"
+      },
+      {
+        "source": "subgraph/interface/base_command",
+        "target": "kaya_hardware.subgraph/interface/base_command"
+      },
+      {
+        "source": "kaya_hardware.subgraph/interface/base_state",
+        "target": "subgraph/interface/base_state"
+      },
+      {
+        "source": "kaya_hardware.subgraph/interface/imu_raw",
+        "target": "subgraph/interface/imu_raw"
+      },
+      {
+        "source": "kaya_hardware.subgraph/interface/realsense_depth",
+        "target": "subgraph/interface/realsense_depth"
+      },
+      {
+        "source": "kaya_hardware.subgraph/interface/realsense_color",
+        "target": "subgraph/interface/realsense_color"
+      }
+    ]
+  }
+}

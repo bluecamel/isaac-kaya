@@ -110,6 +110,14 @@
           "target": "2d_kaya.subgraph/interface/base_command"
         },
         {
+          "source": "websight/WebsightServer/virtual_gamepad",
+          "target": "commander.subgraph/interface/virtual_gamepad_request"
+        },
+        {
+          "source": "commander.subgraph/interface/virtual_gamepad_reply",
+          "target": "websight/WebsightServer/virtual_gamepad_reply"
+        },
+        {
           "source": "2d_kaya.subgraph/interface/base_state",
           "target": "odometry.subgraph/interface/state"
         },

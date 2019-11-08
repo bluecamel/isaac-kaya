@@ -60,3 +60,12 @@ isaac_subgraph(
   subgraph = "2d_kaya.subgraph.json",
   visibility = ["//visibility:public"],
 )
+
+isaac_subgraph(
+  name = "virtual_gamepad",
+  modules = [
+    "@com_nvidia_isaac//packages/navigation"
+  ],
+  subgraph = "virtual_gamepad.subgraph.json",
+  visibility = ["//visibility:public"]
+)

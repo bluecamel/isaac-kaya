@@ -5,37 +5,49 @@ namespace dynamixel {
 
 // private
 
-// TODO: make generic?
-isaac::Vector3i Driver::GetServoValuesInt(const Eigen::Ref<const isaac::Vector3i>& servo_ids, int control_table_address,
+// TODO: generic template?
+isaac::Vector3i Driver::GetServoValuesInt(CommandByteSize command_byte_size,
+                                          const Eigen::Ref<const isaac::Vector3i>& servo_ids, int control_table_address,
                                           std::string name) {
   uint8_t error;
   int result;
-  uint16_t value;
+  int value;
 
   isaac::Vector3i servo_values(servo_ids.rows(), 1);
 
   for (int i = 0; i < servo_ids.rows(); i++) {
     if (configuration_.debug == true) {
-      LOG_DEBUG("Getting %s for servo ID %d.\n", name.c_str(), servo_ids(i, 0));
+      LOG_DEBUG("Getting %s for servo ID %d.\n", name.c_str(), servo_ids(i));
     }
 
-    result = packet_handler_->read2ByteTxRx(port_handler_, servo_ids(i, 0), control_table_address, &value, &error);
+    switch (command_byte_size) {
+      case ONE:
+        uint8_t value_uint8;
+        result = packet_handler_->read1ByteTxRx(port_handler_, servo_ids(i), control_table_address, &value_uint8, &error);
+        value = static_cast<int>(value_uint8);
+        break;
+      case TWO:
+        uint16_t value_uint16;
+        result = packet_handler_->read2ByteTxRx(port_handler_, servo_ids(i), control_table_address, &value_uint16, &error);
+        value = static_cast<int>(value_uint16);
+        break;
+    }
 
     if (result != configuration_.control_values.success) {
       LOG_ERROR(
           "Error communicating with servo ID %d: %s (result: %i) while "
           "getting %s.\n",
-          servo_ids(i, 0), packet_handler_->getTxRxResult(result), result, name.c_str());
-      throw error;
+          servo_ids(i), packet_handler_->getTxRxResult(result), result, name.c_str());
+      throw CommandError::COMMUNICATION;
     } else if (error != 0) {
       if (configuration_.debug == true) {
-        LOG_ERROR("Error getting %s for servo ID %d: %s\n", name.c_str(), servo_ids(i, 0),
+        LOG_ERROR("Error getting %s for servo ID %d: %s\n", name.c_str(), servo_ids(i),
                   packet_handler_->getRxPacketError(error));
       }
-      throw error;
+      throw CommandError::SPECIFIED;
     } else {
       if (configuration_.debug == true) {
-        LOG_DEBUG("Got %s for servo ID %d: %i.\n", name.c_str(), servo_ids(i, 0), value);
+        LOG_DEBUG("Got %s for servo ID %d: %i.\n", name.c_str(), servo_ids(i), value);
       }
     }
 
@@ -45,8 +57,9 @@ isaac::Vector3i Driver::GetServoValuesInt(const Eigen::Ref<const isaac::Vector3i
   return servo_values;
 }
 
-void Driver::SetServoValuesInt(const Eigen::Ref<const isaac::Vector3i>& servo_ids, const Eigen::Ref<const isaac::Vector3i>& servo_values,
-                               int control_table_address, std::string name) {
+void Driver::SetServoValuesInt(CommandByteSize command_byte_size, const Eigen::Ref<const isaac::Vector3i>& servo_ids,
+                               const Eigen::Ref<const isaac::Vector3i>& servo_values, int control_table_address,
+                               std::string name) {
   ASSERT(servo_ids.rows() == servo_values.rows(), "Size of servo_ids and servo_values should match.");
 
   uint8_t error;
@@ -54,25 +67,33 @@ void Driver::SetServoValuesInt(const Eigen::Ref<const isaac::Vector3i>& servo_id
 
   for (int i = 0; i < servo_values.rows(); i++) {
     if (configuration_.debug == true) {
-      LOG_DEBUG("Setting %s to %i for servo ID %d.\n", name.c_str(), servo_values(i, 0), servo_ids(i, 0));
+      LOG_DEBUG("Setting %s to %i for servo ID %d.\n", name.c_str(), servo_values(i, 0), servo_ids(i));
     }
 
-    result = packet_handler_->write2ByteTxRx(port_handler_, servo_ids(i, 0), control_table_address, servo_values(i, 0),
-                                             &error);
+    switch (command_byte_size) {
+      case ONE:
+        result = packet_handler_->write1ByteTxRx(port_handler_, servo_ids(i), control_table_address,
+                                                 servo_values(i, 0), &error);
+        break;
+      case TWO:
+        result = packet_handler_->write2ByteTxRx(port_handler_, servo_ids(i), control_table_address,
+                                                 servo_values(i, 0), &error);
+        break;
+    }
 
     if (result != configuration_.control_values.success) {
       LOG_ERROR(
           "Error communicating with servo ID %d: %s (result: %i) while "
           "setting %s to %i.\n",
-          servo_ids(i, 0), packet_handler_->getTxRxResult(result), result, name.c_str(), servo_values(i, 0));
-      throw error;
+          servo_ids(i), packet_handler_->getTxRxResult(result), result, name.c_str(), servo_values(i, 0));
+      throw CommandError::COMMUNICATION;
     } else if (error != 0) {
-      LOG_ERROR("Error setting %s to %i for servo ID %d: %s.\n", name.c_str(), servo_values(i, 0), servo_ids(i, 0),
+      LOG_ERROR("Error setting %s to %i for servo ID %d: %s.\n", name.c_str(), servo_values(i, 0), servo_ids(i),
                 packet_handler_->getRxPacketError(error));
-      throw error;
+      throw CommandError::SPECIFIED;
     } else {
       if (configuration_.debug == true) {
-        LOG_DEBUG("Set %s to %i for servo ID %d.\n", name.c_str(), servo_values(i, 0), servo_ids(i, 0));
+        LOG_DEBUG("Set %s to %i for servo ID %d.\n", name.c_str(), servo_values(i, 0), servo_ids(i));
       }
     }
   }
@@ -112,14 +133,41 @@ dynamixel_sdk::PortHandler* Driver::GetPortHandler() {
 }
 
 isaac::Vector3i Driver::GetPresentSpeeds(const Eigen::Ref<const isaac::Vector3i>& servo_ids) {
-  return GetServoValuesInt(servo_ids, configuration_.control_table.moving_speed, "present speed");
+  return GetServoValuesInt(TWO, servo_ids, configuration_.control_table.ram.moving_speed, "present speed");
 }
 
 isaac::Vector3i Driver::GetRealtimeTicks(const Eigen::Ref<const isaac::Vector3i>& servo_ids) {
-  return GetServoValuesInt(servo_ids, configuration_.control_table.realtime_tick, "realtime tick");
+  return GetServoValuesInt(TWO, servo_ids, configuration_.control_table.ram.realtime_tick, "realtime tick");
 }
 
 bool Driver::OpenPort() { return port_handler_->openPort(); }
+
+void Driver::Reboot(const Eigen::Ref<const isaac::Vector3i>& servo_ids) {
+  uint8_t error;
+  int result;
+
+  for (int i = 0; i < servo_ids.size(); i++) {
+    result = packet_handler_->reboot(port_handler_, servo_ids(i), &error);
+
+    if (result != configuration_.control_values.success) {
+      LOG_ERROR(
+          "Error communicating with servo ID %d: %s (result: %i) while "
+          "rebooting.\n",
+          servo_ids(i), packet_handler_->getTxRxResult(result), result);
+      throw CommandError::COMMUNICATION;
+    } else if (error != 0) {
+      if (configuration_.debug == true) {
+        LOG_ERROR("Error rebooting servo ID %d: %s\n", servo_ids(i),
+                  packet_handler_->getRxPacketError(error));
+      }
+      throw CommandError::SPECIFIED;
+    } else {
+      if (configuration_.debug == true) {
+        LOG_DEBUG("Rebooted servo ID %d.\n", servo_ids(i));
+      }
+    }
+  }
+}
 
 int Driver::RpmToSpeed(double& rpm) {
   if (rpm == 0) {
@@ -141,17 +189,21 @@ bool Driver::SetBaudRate() { return port_handler_->setBaudRate(configuration_.ba
 
 void Driver::SetConfiguration(Configuration& configuration) { configuration_ = configuration; }
 
-void Driver::SetMovingSpeeds(const Eigen::Ref<const isaac::Vector3i>& servo_ids, const Eigen::Ref<const isaac::Vector3i>& servo_values) {
-  SetServoValuesInt(servo_ids, servo_values, configuration_.control_table.moving_speed, "moving speed");
+void Driver::SetMaxTorque(const Eigen::Ref<const isaac::Vector3i>& servo_ids, const Eigen::Ref<const isaac::Vector3i>& servo_values) {
+  SetServoValuesInt(TWO, servo_ids, servo_values, configuration_.control_table.eeprom.max_torque, "max torque");
 }
 
-void Driver::SetTorqueLimit(const Eigen::Ref<const isaac::Vector3i>& servo_ids, int limit) {
-  isaac::Vector3i servo_values;
-  for (int i = 0; i < servo_ids.rows(); i++) {
-    servo_values(i, 0) = limit;
-  }
+void Driver::SetMovingSpeeds(const Eigen::Ref<const isaac::Vector3i>& servo_ids,
+                             const Eigen::Ref<const isaac::Vector3i>& servo_values) {
+  SetServoValuesInt(TWO, servo_ids, servo_values, configuration_.control_table.ram.moving_speed, "moving speed");
+}
 
-  SetServoValuesInt(servo_ids, servo_values, configuration_.control_table.torque_limit, "torque limit");
+void Driver::SetShutdown(const Eigen::Ref<const isaac::Vector3i>& servo_ids, const Eigen::Ref<const isaac::Vector3i>& servo_values) {
+  SetServoValuesInt(ONE, servo_ids, servo_values, configuration_.control_table.eeprom.shutdown, "shutdown");
+}
+
+void Driver::SetTorqueLimit(const Eigen::Ref<const isaac::Vector3i>& servo_ids, const Eigen::Ref<const isaac::Vector3i>& servo_values) {
+  SetServoValuesInt(TWO, servo_ids, servo_values, configuration_.control_table.ram.torque_limit, "torque limit");
 }
 
 double Driver::SpeedToRpm(int& speed) {
@@ -167,39 +219,15 @@ double Driver::SpeedToRpm(int& speed) {
 }
 
 void Driver::ToggleTorque(const Eigen::Ref<const isaac::Vector3i>& servo_ids, bool enabled) {
-  uint8_t error;
-  int result;
   int torque_enable_value =
       enabled ? configuration_.control_values.torque_enable : configuration_.control_values.torque_disable;
 
-  for (int i = 0; i < servo_ids.size(); i++) {
-    if (configuration_.debug == true) {
-      LOG_DEBUG(
-          "%s torque for servo ID %d (torque enable address: %i, torque "
-          "enable value: %i).\n",
-          enabled ? "Enabling" : "Disabling", servo_ids(i, 0), configuration_.control_table.torque_enable,
-          torque_enable_value);
-    }
-
-    result = packet_handler_->write1ByteTxRx(port_handler_, servo_ids(i, 0), configuration_.control_table.torque_enable,
-                                             torque_enable_value, &error);
-
-    if (result != configuration_.control_values.success) {
-      LOG_ERROR(
-          "Error communicating with servo ID %d: %s (result: %i) while %s "
-          "torque.\n",
-          servo_ids(i, 0), packet_handler_->getTxRxResult(result), result, enabled ? "enabling" : "disabling");
-      throw error;
-    } else if (error != 0) {
-      LOG_ERROR("Error %s torque for servo ID %d: %s.\n", enabled ? "enabling" : "disabling", servo_ids(i, 0),
-                packet_handler_->getRxPacketError(error));
-      throw error;
-    } else {
-      if (configuration_.debug == true) {
-        LOG_DEBUG("%s torque for servo ID %d.\n", enabled ? "Enabled" : "Disabled", servo_ids(i, 0));
-      }
-    }
+  isaac::Vector3i servo_values;
+  for (int i = 0; i < servo_ids.rows(); i++) {
+    servo_values(i, 0) = torque_enable_value;
   }
+
+  SetServoValuesInt(ONE, servo_ids, servo_values, configuration_.control_table.ram.torque_enable, "torque enabled");
 }
 
 }  // namespace dynamixel

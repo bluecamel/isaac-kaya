@@ -21,8 +21,8 @@ void BaseDriver::tick() {
 
     try {
       Move(command);
-    } catch (char const* error) {
-      LOG_ERROR("Stopping due to error: %s", error);
+    } catch (...) {
+      LOG_ERROR("Stopping due to error.");
       stop();
       return;
     }
@@ -63,9 +63,18 @@ void BaseDriver::LoadDynamixelDriver() {
 void BaseDriver::DynamixelStart() {
   LoadDynamixelDriver();
   dynamixel_driver_.Connect();
+
+  isaac::Vector3i torque_zero;
+  torque_zero << 0, 0, 0;
+
+  int torque_value = get_torque_limit() * dynamixel_driver_.configuration_.control_values.torque_limit_maximum;
+  isaac::Vector3i torque_values;
+  torque_values << torque_value, torque_value, torque_value;
+
+  dynamixel_driver_.ToggleTorque(servo_ids_, false);
+  dynamixel_driver_.SetTorqueLimit(servo_ids_, torque_values);
+  dynamixel_driver_.SetMaxTorque(servo_ids_, torque_values);
   dynamixel_driver_.ToggleTorque(servo_ids_, true);
-  dynamixel_driver_.SetTorqueLimit(
-      servo_ids_, get_torque_limit() * dynamixel_driver_.configuration_.control_values.torque_limit_maximum);
 }
 
 void BaseDriver::DynamixelStop() {

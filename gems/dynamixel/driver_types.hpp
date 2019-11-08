@@ -6,7 +6,36 @@
 namespace isaac {
 namespace dynamixel {
 
-struct ControlTable {
+enum CommandByteSize {
+  ONE = 1,
+  TWO = 2
+};
+
+enum CommandError {
+  COMMUNICATION,
+  SPECIFIED
+};
+
+struct ControlTableEEPROM {
+  int model_number;
+  int firmware_version;
+  int id;
+  int baud_rate;
+  int return_delay_time;
+  int cw_angle_limit;
+  int ccw_angle_limit;
+  int temperature_limit;
+  int min_voltage_limit;
+  int max_voltage_limit;
+  int max_torque;
+  int status_return_level;
+  int alarm_led;
+  int shutdown;
+  int multi_turn_offset;
+  int resolution_divider;
+};
+
+struct ControlTableRAM {
   int torque_enable;
   int led;
   int d_gain;
@@ -26,6 +55,11 @@ struct ControlTable {
   int punch;
   int realtime_tick;
   int goal_acceleration;
+};
+
+struct ControlTable {
+  ControlTableEEPROM eeprom;
+  ControlTableRAM ram;
 };
 
 struct ControlValues {
@@ -48,12 +82,6 @@ struct Configuration {
   bool debug;
   std::string device_name;
   float protocol_version;
-};
-
-template<class T>
-struct ServoValue {
-  int servo_id;
-  T value;
 };
 
 }  // namespace dynamixel

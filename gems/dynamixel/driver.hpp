@@ -18,28 +18,39 @@ namespace dynamixel {
 
 class Driver {
  private:
-  dynamixel_sdk::PacketHandler *packet_handler_;
-  dynamixel_sdk::PortHandler *port_handler_;
+  dynamixel_sdk::PacketHandler* packet_handler_;
+  dynamixel_sdk::PortHandler* port_handler_;
 
-  isaac::Vector3i GetServoValuesInt(const Eigen::Ref<const isaac::Vector3i>& servo_ids, int control_table_address, std::string name);
-  void SetServoValuesInt(const Eigen::Ref<const isaac::Vector3i>& servo_ids, const Eigen::Ref<const isaac::Vector3i>& servo_values, int control_table_address, std::string name);
+  isaac::Vector3i GetServoValuesInt(CommandByteSize command_byte_size,
+                                    const Eigen::Ref<const isaac::Vector3i>& servo_ids, int control_table_address,
+                                    std::string name);
+  void SetServoValuesInt(CommandByteSize command_byte_size, const Eigen::Ref<const isaac::Vector3i>& servo_ids,
+                         const Eigen::Ref<const isaac::Vector3i>& servo_values, int control_table_address,
+                         std::string name);
 
  public:
   Configuration configuration_;
 
   void Connect();
   void Disconnect();
-  dynamixel_sdk::PacketHandler *GetPacketHandler();
-  dynamixel_sdk::PortHandler *GetPortHandler();
+  dynamixel_sdk::PacketHandler* GetPacketHandler();
+  dynamixel_sdk::PortHandler* GetPortHandler();
   isaac::Vector3i GetPresentSpeeds(const Eigen::Ref<const isaac::Vector3i>& servo_ids);
   isaac::Vector3i GetRealtimeTicks(const Eigen::Ref<const isaac::Vector3i>& servo_ids);
   bool OpenPort();
-  int RpmToSpeed(double &rpm);
+  void Reboot(const Eigen::Ref<const isaac::Vector3i>& servo_ids);
+  int RpmToSpeed(double& rpm);
   bool SetBaudRate();
   void SetConfiguration(Configuration& configuration);
-  void SetMovingSpeeds(const Eigen::Ref<const isaac::Vector3i>& servo_ids, const Eigen::Ref<const isaac::Vector3i>& servo_values);
-  void SetTorqueLimit(const Eigen::Ref<const isaac::Vector3i>& servo_ids, int limit);
-  double SpeedToRpm(int &speed);
+  void SetMaxTorque(const Eigen::Ref<const isaac::Vector3i>& servo_ids,
+                    const Eigen::Ref<const isaac::Vector3i>& servo_values);
+  void SetMovingSpeeds(const Eigen::Ref<const isaac::Vector3i>& servo_ids,
+                       const Eigen::Ref<const isaac::Vector3i>& servo_values);
+  void SetShutdown(const Eigen::Ref<const isaac::Vector3i>& servo_ids,
+                   const Eigen::Ref<const isaac::Vector3i>& servo_values);
+  void SetTorqueLimit(const Eigen::Ref<const isaac::Vector3i>& servo_ids,
+                      const Eigen::Ref<const isaac::Vector3i>& servo_values);
+  double SpeedToRpm(int& speed);
   void ToggleTorque(const Eigen::Ref<const isaac::Vector3i>& servo_ids, bool enabled);
 };
 
